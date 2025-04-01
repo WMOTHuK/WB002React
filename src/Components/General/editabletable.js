@@ -5,7 +5,14 @@ import saveandupdate from './saveandupdate';
 // Компонент для отображения и редактирования данных
 function EditableTable({ tablename, tablekey, data, renderInput, rendercheckbox, norender, translations, img }) {
     // Инициализируем состояние для хранения и изменения данных
-    const [rows, setRows] = useState(data || []);
+    const [rows, setRows] = useState(
+      (data || []).map(row => ({ 
+      ...row,
+      // Инициализируем все renderInput поля пустой строкой
+      ...Object.fromEntries(
+        renderInput.map(field => [field, row[field] || ''])
+      )
+    })));
     const [errorMessages, seterrors] = useState([]);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
     const [logdata, setlog] = useState([]);

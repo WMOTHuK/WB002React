@@ -1,12 +1,11 @@
 import React from 'react';
-import styles from '../../CSS/styles.module.css'
+import WideWidget from '../Vidgets/WideWidget';
 
-function upload() {
-  return <div className={styles.pagecontainer}>
-    <div className={styles.vidget}>
-      <p>Заглушка</p>
-    </div>
-  </div>;
-}
+const upload = () => (
+  <WideWidget title="Загрузка данных">
+    {/* Можно добавить уникальный контент между тегами */}
+  {/*  <p>Статистика по кампаниям</p> */}
+  </WideWidget> 
+)
 
 export default upload;
