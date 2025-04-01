@@ -1,0 +1,62 @@
+.menuContainer {
+    background-color: #ffffff; /* Цвет фона контейнера */
+    border-radius: 10px; /* Скругление углов */
+    padding: 10px; /* Внутренний отступ */
+    margin: 50px; /* Внешний отступ */
+    margin-bottom: 0px;
+    display: flex; /* Использование Flexbox для центрирования */
+    justify-content: center; /* Горизонтальное выравнивание */
+    box-shadow: 0px 0px 8px rgb(0, 0, 0); /* Тень для контейнера */
+  }
+  
+  .navbar {
+    list-style-type: none;
+    padding: 0;
+    display: flex; /* Элементы в ряд */
+    flex-wrap: wrap; /* Автоматический перенос элементов */
+  }
+
+  .navbar li {
+    margin: 5px 10px; /* Отступы между элементами списка */
+    position: relative;
+  }
+  
+  .navbar li a,
+  .fakeli {
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    font-weight: bold; /* Жирное начертание */
+    cursor: pointer;
+  }
+  
+  .subMenuContainer {
+    position: absolute;
+    top: 100%; /* Регулируйте эти значения в соответствии с вашими потребностями */
+    left: 0;
+    z-index: 1000; /* Достаточно высокий, чтобы быть поверх других элементов */
+    background-color: #ffffff; /* Цвет фона контейнера */
+    border-radius: 10px; /* Скругление углов */
+    padding: 10px; /* Внутренний отступ */
+    margin: 10px 0px 0px 10px  ; /* Внешний отступ */
+    justify-content:left; /* Горизонтальное выравнивание */
+    box-shadow: 0px 0px 8px rgb(0, 0, 0); /* Тень для контейнера */
+  }
+  
+  .subMenu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background-color: white; /* Или любой другой цвет, который вам нравится */
+  }
+  
+  .subMenu li {
+    margin-top: 10px; /* Регулируйте отступы по вашему вкусу */
+    white-space: nowrap;
+  }
+  /* Адаптивность */
+  @media (max-width: 768px) {
+    .menuContainer {
+      flex-direction: column; /* Столбцовое расположение для мобильных устройств */
+      align-items: center; /* Вертикальное выравнивание */
+    }
+  }

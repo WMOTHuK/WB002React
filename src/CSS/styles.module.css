@@ -1,0 +1,103 @@
+.pagecontainer {
+  display: flex;
+  justify-content: flex-start; /* Выравнивание элементов по центру контейнера */
+  align-items: center; /* Центрирование элементов по вертикали */
+}
+.vidget {
+  background-color: #ffffff; /* Цвет фона контейнера */
+  border-radius: 10px; /* Скругление углов */
+  padding: 10px; /* Внутренний отступ */
+  margin: 50px; /* Внешний отступ */
+
+  display: flex; /* Использование Flexbox для центрирования */
+  align-self:flex-start;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+/*   width: ; */
+/*     max-width: 300px; */
+  justify-content: center; /* Горизонтальное выравнивание */
+  box-shadow: 0px 0px 8px rgb(0, 0, 0); /* Тень для контейнера */
+}
+.comtable{
+  border-collapse: collapse; /* Убирает двойные границы */
+}
+.tablerow{
+  height: 60px;
+}
+.tableheader {
+  word-wrap: break-word;
+  margin: 0;
+  text-transform: none;
+  width: auto;
+  white-space: normal; /* Разрешает перенос текста */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.45); /* Добавляет красную границу снизу каждой ячейки */
+  cursor: pointer;
+}
+
+.tabledata{
+  width: auto;
+  white-space: normal; /* Разрешает перенос текста */
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.45); /* Добавляет красную границу снизу каждой ячейки */
+}
+
+tr:last-child td {
+  border-bottom: none; /* Убирает границу снизу у последней строки, чтобы не было двойной границы */
+}
+
+.tablespan {
+  box-sizing: border-box;
+  color: #000;
+  font-family: var(--portals-font-family-hauss);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+  outline: none;
+  padding: 11px 12px;
+  transition-duration: .15s;
+  transition-property: border,background-color;
+  width: 100%;
+}
+.tableinput {
+  border: 1px solid #e3e4ea;
+  border-radius: 8px;
+  box-sizing: border-box;
+  color: #000;
+  font-family: var(--portals-font-family-hauss);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+  outline: none;
+  padding: 5px 6px;
+  transition-duration: .15s;
+  transition-property: border,background-color;
+  width: 100px;
+}
+.tablephoto{height: 44px;
+  width: 36px;
+  overflow: hidden;
+  margin: auto;
+position: relative;
+align-self: center;}
+
+.smallimg {
+  border-radius: 4px;
+  height: 44px;
+  object-fit: contain;
+  object-position: center;
+  width: 36px;
+  display:flex;
+  align-self: center;
+}
+
+  /* Адаптивность */
+  @media (max-width: 768px) {
+    .menuContainer {
+      flex-direction: column; /* Столбцовое расположение для мобильных устройств */
+      align-items: center; /* Вертикальное выравнивание */
+    }
+  }
