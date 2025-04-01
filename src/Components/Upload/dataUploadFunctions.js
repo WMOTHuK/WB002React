@@ -48,7 +48,7 @@ export const uploadGoodsData = async (globalData, setStatus) => {
   try {
 
     setStatus(prevStatus => [...prevStatus,`Запуск процедуры по товарам`]);
-    const url = 'https://suppliers-api.wildberries.ru/content/v2/get/cards/list?=ru';
+    const url = 'https://content-api.wildberries.ru/content/v2/get/cards/list';
     const wbData = await fetchgoods(url, globalData.apikeycontent);
     const { singleFields: goods, photos } = processCards(wbData.cards);
     setStatus(prevStatus => [...prevStatus, `Данные из Вайлдберриз получены успешно(Товары)`]);
@@ -56,7 +56,7 @@ export const uploadGoodsData = async (globalData, setStatus) => {
     await saveandupdate(photos, 'nmid', gettableKeys(photos), 'photos');
     setStatus(prevStatus => [...prevStatus, `Данные из Вайлдберриз обновлены(Товары)`]);
   } catch (error) {
-    setStatus(prevStatus => [...prevStatus, `Ошибка при загрузке данных(uploadGoodsData): ${error.message}`]);
+    setStatus(prevStatus => [...prevStatus, `Ошибка при загрузке данных(uploadGoodsData): ${error.response.data.detail}`]);
   }
   return setStatus;
 };

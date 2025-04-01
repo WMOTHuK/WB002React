@@ -33,7 +33,7 @@ const response = await axios.post(url, {
 // Проверяем статус ответа
 if (response.status !== 200) {
   debugger;
-    throw new Error(`Данные из Вайлдберриз не получены. Статус: ${response.status}`);
+    throw new Error(`Данные из Вайлдберриз не получены. ${response.data}`);
 }
 return response.data;
 
