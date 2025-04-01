@@ -1,12 +1,10 @@
 import React from 'react';
-import styles from '../../CSS/styles.module.css'
+import WideWidget from '../Vidgets/WideWidget';
 
-function FI_reporting() {
-    return <div className={styles.pagecontainer}>
-    <div className={styles.vidget}>
-      <p>Заглушка FI отчёты</p>
-    </div>
-  </div>;
-}
+const FI_reporting = () => (
+  <WideWidget title="Финансовая отчётность">
+    <p>Графики и аналитика</p>
+  </WideWidget>
+);
 
 export default FI_reporting;

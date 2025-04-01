@@ -11,28 +11,40 @@ import CRM_campaigns from './Components/CRM/campaign';
 import styles from './CSS/Menu.module.css';
 import MyGlobalContext from './Components/Context/context';
 import globalData from './Components/Private/apikeys';
+import SubMenu from './Components/MenuStructure/SubMenu';
 //import './CSS/App.css';
  
 function Menu() {
-  const [isFiSubMenuVisible, setFiSubMenuVisible] = useState(false);
-  const [isCRMSubMenuVisible, setCRMSubMenuVisible] = useState(false);
+  //  единый объект для состояний подменю
+  const [subMenus, setSubMenus] = useState({
+    FI: false,
+    CRM: false
+  });
   const subMenuRef = useRef(null);
-  // Функция для переключения видимости подменю
-  const toggleFiSubMenu = (event) => {
-    event.preventDefault(); // Предотвращаем переход по ссылке
-    setFiSubMenuVisible(!isFiSubMenuVisible);
+
+  const subMenuItems = {
+    FI: [
+      { path: "/Fi/Reports", label: "Отчеты" },
+      { path: "/Fi/Overheads", label: "Накладные расходы" }
+    ],
+    CRM: [
+      { path: "/CRM/campaign", label: "Рекламные компании" }
+    ]
+  };
+//  Универсальная функция для всех подменю
+  const toggleSubMenu = (menuId, event) => {
+    event.preventDefault();
+    setSubMenus(prev => ({
+      ...prev,
+      [menuId]: !prev[menuId]
+    }));
   };
 
-// Функция для переключения видимости подменю
-  const toggleCRMSubMenu = (event) => {
-    event.preventDefault(); // Предотвращаем переход по ссылке
-    setCRMSubMenuVisible(!isCRMSubMenuVisible);
-  };
-  // Обработчик клика вне подменю
+  // Обработчик клика вне подменю (Закрываем все подменю)
   useEffect(() => {
     function handleClickOutside(event) {
       if (subMenuRef.current && !subMenuRef.current.contains(event.target)) {
-        setFiSubMenuVisible(false);
+        setSubMenus({ FI: false, CRM: false });
       }
     }
     // Привязываем обработчики
@@ -50,26 +62,21 @@ function Menu() {
           <li><Link to="/">Главная</Link></li>
           <li><Link to="/Upload">Загрузка</Link></li>
           <li><Link to="/Goods">Товары</Link></li>
-          <li className={styles.fakeli} onClick={toggleFiSubMenu}>
-            Финансы {/* Изменено с <Link> на простой текст */}
-            {isFiSubMenuVisible && (
-              <div ref={subMenuRef} className={styles.subMenuContainer}>
-                <ul className={styles.subMenu}>
-                  <li><Link to="/Fi/Reports">Отчеты</Link></li>
-                  <li><Link to="/Fi/Overheads">Накладные расходы</Link></li>
-                </ul>
-              </div>
-            )}
+          <li className={styles.fakeli} onClick={(e) => toggleSubMenu('FI', e)}>
+            Финансы
+            <SubMenu 
+              items={subMenuItems.FI} 
+              isVisible={subMenus.FI} 
+              menuRef={subMenuRef} 
+            />
           </li>
-          <li className={styles.fakeli} onClick={toggleCRMSubMenu}>
-            Продвижение {/* Изменено с <Link> на простой текст */}
-            {isCRMSubMenuVisible && (
-              <div ref={subMenuRef} className={styles.subMenuContainer}>
-                <ul className={styles.subMenu}>
-                  <li><Link to="/CRM/campaign">Рекламные компании</Link></li>
-                </ul>
-              </div>
-            )}
+          <li className={styles.fakeli} onClick={(e) => toggleSubMenu('CRM', e)}>
+            Продвижение
+            <SubMenu 
+              items={subMenuItems.CRM} 
+              isVisible={subMenus.CRM} 
+              menuRef={subMenuRef} 
+            />
           </li>
           <li><Link to="/Pricing">Изменение цен</Link></li>
           <li><Link to="/login">Вход</Link></li>
@@ -91,7 +98,7 @@ function App() {
           <Route path="/goods" element={<Goods />} />
           <Route path="/Fi/Reports" element={<FI_reporting />} />
           <Route path="/Fi/Overheads" element={<FI_overheads />} />
-          <Route path="/CRM/Campaigns" element={<CRM_campaigns />} />
+          <Route path="/CRM/Campaign" element={<CRM_campaigns />} />
           <Route path="/Pricing" element={<Pricing />} />
           <Route path="/login" element={<Login />} />
         </Routes>

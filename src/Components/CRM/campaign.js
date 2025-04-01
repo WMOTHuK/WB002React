@@ -1,12 +1,11 @@
 import React from 'react';
-import styles from '../../CSS/styles.module.css'
+import WideWidget from '../Vidgets/WideWidget';
 
-function CRM_campaigns() {
-    return <div className={styles.pagecontainer}>
-    <div className={styles.vidget}>
-      <p>Заглушка рекламные компании</p>
-    </div>
-  </div>;
-}
+const CRM_campaigns = () => (
+  <WideWidget title="Рекламные кампании">
+    {/* Можно добавить уникальный контент между тегами */}
+  {/*  <p>Статистика по кампаниям</p> */}
+  </WideWidget> 
+);
 
 export default CRM_campaigns;
