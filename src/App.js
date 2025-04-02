@@ -1,5 +1,6 @@
+//app.js
 import React, { useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
 import Home from './Components/Home/home';
 import Login from './Components/Login/login';
 import Upload from './Components/Upload/upload';
@@ -14,9 +15,11 @@ import SubMenu from './Components/MenuStructure/SubMenu';
 import ProtectedRoute from './Components/Auth/ProtectedRoute';
 import Register from './Components/Register/Register';
 
+
 const MenuWrapper = () => {
   const { userData, logout } = useContext(UserContext);
-  
+  const navigate = useNavigate(); 
+
   // Перенесли все хуки сюда
   const [subMenus, setSubMenus] = React.useState({
     FI: false,
@@ -62,7 +65,7 @@ const MenuWrapper = () => {
       <nav>
         <ul className={styles.navbar}>
           <li><Link to="/">Главная</Link></li>
-          {userData.apiKeys ? (
+          {userData?.userInfo?.token ? (
             <>
               <li><Link to="/Upload">Загрузка</Link></li>
               <li><Link to="/Goods">Товары</Link></li>
@@ -85,11 +88,17 @@ const MenuWrapper = () => {
               <li><Link to="/Pricing">Изменение цен</Link></li>
               <li>
                 <button onClick={() => {
-                  logout();
-                  window.location.href = '/';
-                }} className={styles.logoutButton}>
+                  if (window.confirm('Вы уверены, что хотите выйти?')) {
+                    logout();
+                    navigate('/');
+                  }
+                }} className={styles.fakeli}>
                   Выход
                 </button>
+              </li>
+              {/* Добавляем информацию о пользователе */}
+              <li className={styles.userInfo}>
+                Вы вошли как: <span>{userData.userInfo.login}</span>
               </li>
             </>
           ) : (
@@ -102,8 +111,10 @@ const MenuWrapper = () => {
 };
 
 const LoginRoute = () => {
-  const { userData } = useContext(UserContext);
-  return userData?.apiKeys ? <Navigate to="/goods" /> : <Login />;
+  const { userData, authChecked } = useContext(UserContext);
+  
+  if (!authChecked) return <div>Проверка авторизации...</div>;
+  return userData?.userInfo?.token ? <Navigate to="/goods" /> : <Login />;
 };
 
 function App() {
@@ -115,13 +126,16 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<LoginRoute />} />
-            <Route path="/Upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
-            <Route path="/goods" element={<ProtectedRoute><Goods /></ProtectedRoute>} />
-            <Route path="/Fi/Reports" element={<ProtectedRoute><FI_reporting /></ProtectedRoute>} />
-            <Route path="/Fi/Overheads" element={<ProtectedRoute><FI_overheads /></ProtectedRoute>} />
-            <Route path="/CRM/campaign" element={<ProtectedRoute><CRM_campaigns /></ProtectedRoute>} />
-            <Route path="/Pricing" element={<ProtectedRoute><Pricing /></ProtectedRoute>} />
             <Route path="/register" element={<Register />} />
+            {/* Защищенные маршруты */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/upload" element={<Upload />} />
+              <Route path="/goods" element={<Goods />} />
+              <Route path="/fi/reports" element={<FI_reporting />} />
+              <Route path="/fi/overheads" element={<FI_overheads />} />
+              <Route path="/crm/campaign" element={<CRM_campaigns />} />
+              <Route path="/pricing" element={<Pricing />} />
+            </Route>
           </Routes>
         </div>
       </Router>

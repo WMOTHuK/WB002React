@@ -7,7 +7,7 @@ import WideWidget from '../Vidgets/WideWidget';
 
 const Login = () => {
   
-  const { userData, initApiKeys } = useContext(UserContext);
+  const { userData, login } = useContext(UserContext);
   const [credentials, setCredentials] = useState({ login: '', password: '' });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -20,27 +20,16 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      // 1. Аутентификация пользователя
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials)
       });
-
-      if (!response.ok) {
-        throw new Error('Неверные учетные данные');
-      }
-
-      const { token } = await response.json();
-
-      // 2. Получение API-ключей через бэкенд
-      const apiKeys = await initApiKeys(token);
-
-      if (!apiKeys) {
-        throw new Error('Не удалось получить API ключи');
-      }
-
-      // 3. Перенаправление после успешной авторизации
+  
+      if (!response.ok) throw new Error('Неверные учетные данные');
+  
+      const { token, login: username } = await response.json();
+      await login(token, username); // Передаём оба параметра
       navigate('/goods');
     } catch (err) {
       setError(err.message);

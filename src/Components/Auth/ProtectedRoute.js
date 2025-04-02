@@ -1,16 +1,17 @@
 // ProtectedRoute.js
-import { useContext } from 'react';
-import { Navigate } from 'react-router-dom';
-import { UserContext } from '../Context/context';
 import React from 'react';
-const ProtectedRoute = ({ children }) => {
-  const { userData } = useContext(UserContext);
 
-  if (!userData.apiKeys) {
-    return <Navigate to="/" replace />;
-  }
+import { useContext } from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
+import { UserContext } from '../Context/context';
 
-  return children;
+const ProtectedRoute = () => {
+  const { userData, authChecked } = useContext(UserContext);
+
+  if (!authChecked) return <div>Проверка авторизации...</div>;
+  if (!userData?.userInfo?.token) return <Navigate to="/login" replace />;
+
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

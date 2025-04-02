@@ -148,11 +148,11 @@ function Goodsmain() {
   return (
     <div className={styles.vidget}>
 {/* Блок вывода ошибок ниже.( раскомментить для вывода на экран) */}
-{/*       <div>
+      <div>
         {status.map((line, index) => (
           <p key={index}>{line}</p>
         ))}
-      </div> */}
+      </div>
       {goodsdata && (
         <EditableTable
           tablename={"goods"}

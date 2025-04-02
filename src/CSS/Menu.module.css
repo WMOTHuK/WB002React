@@ -1,91 +1,119 @@
+/* Menu.module.css */
 .menuContainer {
-    background-color: #ffffff; /* Цвет фона контейнера */
-    border-radius: 10px; /* Скругление углов */
-    padding: 10px; /* Внутренний отступ */
-    margin: 50px; /* Внешний отступ */
-    margin-bottom: 0px;
-    display: flex; /* Использование Flexbox для центрирования */
-    justify-content: center; /* Горизонтальное выравнивание */
-    box-shadow: 0px 0px 8px rgb(0, 0, 0); /* Тень для контейнера */
-  }
-  
-  .navbar {
-    list-style-type: none;
-    padding: 0;
-    display: flex; /* Элементы в ряд */
-    flex-wrap: wrap; /* Автоматический перенос элементов */
-  }
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 50px;
+  margin-bottom: 0px;
+  display: flex;
+  justify-content: center;
+  box-shadow: 0px 0px 8px rgb(0, 0, 0);
+}
 
-  .navbar li {
-    margin: 5px 10px; /* Отступы между элементами списка */
-    position: relative;
-  }
-  
-  .navbar li a,
-  .fakeli {
-    text-decoration: none;
-    color: rgb(0, 0, 0);
-    font-weight: bold; /* Жирное начертание */
-    cursor: pointer;
-  }
-  
-  .subMenuContainer {
-    position: absolute;
-    top: 100%; /* Регулируйте эти значения в соответствии с вашими потребностями */
-    left: 0;
-    z-index: 1000; /* Достаточно высокий, чтобы быть поверх других элементов */
-    background-color: #ffffff; /* Цвет фона контейнера */
-    border-radius: 10px; /* Скругление углов */
-    padding: 10px; /* Внутренний отступ */
-    margin: 10px 0px 0px 10px  ; /* Внешний отступ */
-    justify-content:left; /* Горизонтальное выравнивание */
-    box-shadow: 0px 0px 8px rgb(0, 0, 0); /* Тень для контейнера */
-  }
-  
-  .subMenu {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    background-color: white; /* Или любой другой цвет, который вам нравится */
-  }
-  
-  .subMenu li {
-    margin-top: 10px; /* Регулируйте отступы по вашему вкусу */
-    white-space: nowrap;
-  }
+.navbar {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
 
-  .error {
-    color: #ff3333;
-    margin-bottom: 15px;
-  }
-  
-  
-  
-  .primaryButton {
-    background-color: #4CAF50;
-    color: white;
+.navbar li {
+  margin: 5px 10px;
+  position: relative;
+  cursor: pointer; 
+}
+
+.navbar li a,
+.navbar li button,
+.navbar li.fakeli {
+  text-decoration: none;
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+  cursor: pointer; 
+}
+
+.navbar li:hover {
+  cursor: pointer; 
+}
+
+.subMenuContainer {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px 0px 0px 10px;
+  justify-content: left;
+  box-shadow: 0px 0px 8px rgb(0, 0, 0);
+}
+
+.subMenu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background-color: rgb(255, 255, 255);
+}
+
+.subMenu li {
+  margin-top: 10px;
+  white-space: nowrap;
+}
+
+.error {
+  color: #ff3333;
+  margin-bottom: 15px;
+}
+
+.primaryButton {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.logoutButton {
+  background: none;
+  border: none;
+  color: #000000;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+}
+
+.logoutButton:hover {
+  text-decoration: underline;
+  color: #4CAF50;
+}
+
+.userInfo {
+  margin-left: auto; /* Выравниваем справа */
+  padding: 0 15px;
+  color: #000000;
+  font-size: 14px;
+}
+
+.userInfo span {
+  font-weight: bold;
+  color: #000000;
+}
+
+/* Для мобильных устройств можно добавить адаптацию */
+@media (max-width: 768px) {
+  .userInfo {
+    margin-left: 0;
     padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+    border-top: 1px solid #444;
+    width: 100%;
   }
-  
-  .logoutButton {
-    background: none;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-    padding: 0;
-    font: inherit;
+}
+
+@media (max-width: 768px) {
+  .menuContainer {
+    flex-direction: column;
+    align-items: center;
   }
-  .logoutButton:hover {
-    text-decoration: underline;
-    color: #4CAF50; /* Цвет при наведении */
-  }
-    /* Адаптивность */
-    @media (max-width: 768px) {
-      .menuContainer {
-        flex-direction: column; /* Столбцовое расположение для мобильных устройств */
-        align-items: center; /* Вертикальное выравнивание */
-      }
-    }
+}

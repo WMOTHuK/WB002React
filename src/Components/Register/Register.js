@@ -1,3 +1,4 @@
+//./Components/Register/Register.js
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../Context/context';
@@ -17,26 +18,38 @@ const Register = () => {
   });
   const navigate = useNavigate();
   const { initApiKeys } = useContext(UserContext);
+  const hasErrors = Object.keys(validationErrors).length > 0;
 
   const validateField = (name, value) => {
-    const errors = {};
-    
-    if (name === 'login' && value.length > 0 && value.length < 3) {
-      errors.login = 'Логин слишком короткий';
-    }
-    
-    if (name === 'password' && value.length > 0 && value.length < 6) {
-      errors.password = 'Пароль слишком короткий';
-    }
-    
-    if (name === 'confirmPassword' && value !== formData.password) {
-      errors.confirmPassword = 'Пароли не совпадают';
-    }
-    
-    setValidationErrors(prev => ({
-      ...prev,
-      ...errors
-    }));
+    setValidationErrors((prev) => {
+      const errors = { ...prev }; // Копируем предыдущие ошибки
+  
+      if (name === 'login') {
+        if (value.length > 0 && value.length < 3) {
+          errors.login = 'Логин слишком короткий';
+        } else {
+          delete errors.login; // Удаляем ошибку для логина, если она больше не актуальна
+        }
+      }
+  
+      if (name === 'password') {
+        if (value.length > 0 && value.length < 6) {
+          errors.password = 'Пароль слишком короткий';
+        } else {
+          delete errors.password; // Удаляем ошибку для пароля, если она больше не актуальна
+        }
+      }
+  
+      if (name === 'confirmPassword') {
+        if (value !== formData.password) {
+          errors.confirmPassword = 'Пароли не совпадают';
+        } else {
+          delete errors.confirmPassword; // Удаляем ошибку для подтверждения пароля, если она больше не актуальна
+        }
+      }
+  
+      return errors; // Возвращаем обновленный объект ошибок
+    });
   };
 
   const handleChange = (e) => {
@@ -109,7 +122,7 @@ const Register = () => {
         password: '',
         confirmPassword: ''
       }); 
-
+      setValidationErrors({}); // Очищаем все ошибки
       
       setStatus({
         loading: false,
@@ -152,7 +165,7 @@ const Register = () => {
         
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
-            <label>Логин:</label>
+            <label>Логин(e-mail):</label>
             <input
             type="text"
             name="login"
@@ -203,7 +216,7 @@ const Register = () => {
           <button 
             type="submit" 
             className={styles.primaryButton}
-            disabled={status.loading || status.success}
+            disabled={status.loading || status.success || hasErrors}
           >
             {status.loading ? 'Регистрация...' : 
              status.success ? 'Успешно!' : 'Зарегистрироваться'}
