@@ -12,6 +12,7 @@ import styles from './CSS/Menu.module.css';
 import { UserProvider, UserContext } from './Components/Context/context';
 import SubMenu from './Components/MenuStructure/SubMenu';
 import ProtectedRoute from './Components/Auth/ProtectedRoute';
+import Register from './Components/Register/Register';
 
 const MenuWrapper = () => {
   const { userData, logout } = useContext(UserContext);

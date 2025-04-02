@@ -53,13 +53,7 @@
     margin-top: 10px; /* Регулируйте отступы по вашему вкусу */
     white-space: nowrap;
   }
-  /* Адаптивность */
-  @media (max-width: 768px) {
-    .menuContainer {
-      flex-direction: column; /* Столбцовое расположение для мобильных устройств */
-      align-items: center; /* Вертикальное выравнивание */
-    }
-  }
+
   .error {
     color: #ff3333;
     margin-bottom: 15px;
@@ -88,3 +82,10 @@
     text-decoration: underline;
     color: #4CAF50; /* Цвет при наведении */
   }
+    /* Адаптивность */
+    @media (max-width: 768px) {
+      .menuContainer {
+        flex-direction: column; /* Столбцовое расположение для мобильных устройств */
+        align-items: center; /* Вертикальное выравнивание */
+      }
+    }
