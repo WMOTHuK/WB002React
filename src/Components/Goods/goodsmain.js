@@ -7,7 +7,7 @@ import {
 import "../../CSS/App.css";
 import EditableTable from "../General/editabletable";
 import { gettableKeys } from "../General/tableactions";
-import MyGlobalContext from "../Context/context";
+import { UserContext } from "../Context/context";
 import { uploadGoodsData } from "../Upload/dataUploadFunctions";
 
 // Функция для обработки данных
@@ -51,14 +51,14 @@ function Goodsmain() {
   const [goodsdata, setGdata] = useState(null);
   const renderInputFields = ["sprice"];
   const [translations, settrans] = useState([]);
-  const globalData = useContext(MyGlobalContext);
+  const userdata = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(true); // Добавленное состояние для отслеживания загрузки
   useEffect(() => {
     const initializeData = async () => {
       setIsLoading(true); // Начало загрузки
       setStatus([]);
 
-      await uploadGoodsData(globalData, setStatus); //Обновление данных с портала ВБ и запись в БД
+      await uploadGoodsData(userdata, setStatus); //Обновление данных с портала ВБ и запись в БД
       setStatus((prevStatus) => [...prevStatus, `Перерыв между функциями`]);
       await fetchData(); //получение данных из БД и обработка перед выводом на экран
       setIsLoading(false); // Завершение загрузки
@@ -119,7 +119,7 @@ function Goodsmain() {
         ...prevStatus,
         `Ключи таблицы успешно получены`,
       ]);
-      const translations = await gettablelocale(tablekeys, globalData.locale);
+      const translations = await gettablelocale(tablekeys, userdata.locale);
       setStatus((prevStatus) => [
         ...prevStatus,
         `Переводы для таблицы успешно загружены`,
@@ -147,6 +147,7 @@ function Goodsmain() {
 
   return (
     <div className={styles.vidget}>
+{/* Блок вывода ошибок ниже.( раскомментить для вывода на экран) */}
 {/*       <div>
         {status.map((line, index) => (
           <p key={index}>{line}</p>

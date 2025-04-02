@@ -1,7 +1,33 @@
 // dataUploadFunctions.js
+import axios from 'axios';
 import fetchgoods from '../General/FromWildberries/fetchgoods';
 import saveandupdate from '../General/saveandupdate';
 import { gettableKeys } from '../General/tableactions';
+import apikeys from '../Private/userdata';
+
+
+const content_url = 'https://content-api.wildberries.ru/content/v2/get/cards/list';
+const crm_url = 'https://advert-api.wb.ru/adv/v1/promotion/count';
+
+/**
+ * Универсальная функция для GET-запросов к API Wildberries
+ * @param {Object} params - Параметры запроса
+ * @returns {Promise} - Результат запроса
+ */
+export const WB_get_request = async (globalData, apikeys, params = {}) => {
+  try {
+    const response = await axios.get(crm_url, {
+      headers: {
+        'Authorization': `Bearer ${apikeys.apikeycrm}`,
+        'Content-Type': 'application/json'
+      },
+      params
+    });
+    return response.data;
+  } catch (err) {
+    throw new Error(`WB API request failed: ${err.response?.data?.message || err.message}`);
+  }
+};
 
 
 function processCards(wbData) {
@@ -44,12 +70,11 @@ function processCards(wbData) {
 
   return { singleFields, photos };
 }
-export const uploadGoodsData = async (globalData, setStatus) => {
+export const uploadGoodsData = async (userContext, setStatus) => {
   try {
 
     setStatus(prevStatus => [...prevStatus,`Запуск процедуры по товарам`]);
-    const url = 'https://content-api.wildberries.ru/content/v2/get/cards/list';
-    const wbData = await fetchgoods(url, globalData.apikeycontent);
+    const wbData = await fetchgoods(content_url, userContext.apikeycontent);
     const { singleFields: goods, photos } = processCards(wbData.cards);
     setStatus(prevStatus => [...prevStatus, `Данные из Вайлдберриз получены успешно(Товары)`]);
     await saveandupdate(goods, 'nmid', gettableKeys(goods), 'goods');

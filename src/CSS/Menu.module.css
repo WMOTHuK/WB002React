@@ -60,3 +60,31 @@
       align-items: center; /* Вертикальное выравнивание */
     }
   }
+  .error {
+    color: #ff3333;
+    margin-bottom: 15px;
+  }
+  
+  
+  
+  .primaryButton {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .logoutButton {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 0;
+    font: inherit;
+  }
+  .logoutButton:hover {
+    text-decoration: underline;
+    color: #4CAF50; /* Цвет при наведении */
+  }

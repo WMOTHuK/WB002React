@@ -13,7 +13,7 @@
   align-self:flex-start;
   flex-direction: column;
   gap: 10px;
-/*   width: 90%; */
+  width: 100%;  
 /*   width: ; */
 /*     max-width: 300px; */
   justify-content: center; /* Горизонтальное выравнивание */
@@ -94,6 +94,35 @@ align-self: center;}
   align-self: center;
 }
 
+
+.formGroup {
+  margin-bottom: 15px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.formGroup input {
+  width: 200px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.authLink {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.authLink a {
+  color: #4CAF50;
+  text-decoration: none;
+}
+
+.authLink a:hover {
+  text-decoration: underline;
+}
   /* Адаптивность */
   @media (max-width: 768px) {
     .menuContainer {

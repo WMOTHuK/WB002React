@@ -6,8 +6,8 @@ import '../../CSS/App.css';
 import { fetchWBdata } from '../General/FromWildberries/fromwildberries';
 import EditableTable from '../General/editabletable';
 import { gettableKeys } from '../General/tableactions';
-import MyGlobalContext from '../Context/context';
 import { uploadGoodsData } from '../Upload/dataUploadFunctions';
+import { UserContext } from '../Context/context';
 
 // Функция для обработки данных
 async function getadddata(finalData) {
@@ -68,7 +68,7 @@ function Changeprice() {
   const renderInputFields = ['dayprice', 'daydisc', 'nightprice', 'nightdisc'];
   const rendercheckboxfields = ['active'];
   const [translations, settrans] = useState([]);
-  const globalData = useContext(MyGlobalContext);
+  const userdata = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(true); // Добавленное состояние для отслеживания загрузки
   useEffect(() => {
     setStatus(prevStatus => [...prevStatus, `Начало функции инициализации`]);
@@ -77,7 +77,7 @@ function Changeprice() {
       setIsLoading(true); // Начало загрузки
       setStatus([]);
       
-      await uploadGoodsData(globalData, setStatus);
+      await uploadGoodsData(userdata, setStatus);
       setStatus(prevStatus => [...prevStatus, `Перерыв между функциями`]);
       await fetchData();
       setIsLoading(false); // Завершение загрузки
@@ -93,7 +93,7 @@ function Changeprice() {
     setStatus(prevStatus => [...prevStatus, `запуск процедуры по ценам`]);
     try {
       const url = 'https://discounts-prices-api.wb.ru/api/v2/list/goods/filter?limit=1000&offset=0';
-      const wbData = await fetchWBdata(url, globalData.apikeyprice);
+      const wbData = await fetchWBdata(url, userdata.apikeyprice);
       setStatus(prevStatus => [...prevStatus, `Данные из Вайлдберриз получены успешно(Цены)`]);
       debugger;
       const results = await sendDataToBackend('/api/save-data/prices', wbData);
@@ -127,7 +127,7 @@ function Changeprice() {
       }
  
       const tablekeys = gettableKeys(resultData);
-      const translations = await gettablelocale(tablekeys, globalData.locale);
+      const translations = await gettablelocale(tablekeys, userdata.locale);
       settrans(translations);
     } catch (error) {
       setStatus(prevStatus => [...prevStatus, `Ошибка при загрузке данных: ${error.message}`]);
