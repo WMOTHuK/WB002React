@@ -8,7 +8,7 @@ import "../../CSS/App.css";
 import EditableTable from "../General/editabletable";
 import { gettableKeys } from "../General/tableactions";
 import { UserContext } from "../Context/context";
-import { uploadGoodsData } from "../Upload/dataUploadFunctions";
+import { downloadGoodsData } from "../Upload/dataUploadFunctions";
 
 // Функция для обработки данных
 async function getadddatagoods(finalData, setStatus) {
@@ -58,7 +58,7 @@ function Goodsmain() {
       setIsLoading(true); // Начало загрузки
       setStatus([]);
 
-      await uploadGoodsData(userdata, setStatus); //Обновление данных с портала ВБ и запись в БД
+      await downloadGoodsData(userdata, setStatus); //Обновление данных с портала ВБ и запись в БД
       setStatus((prevStatus) => [...prevStatus, `Перерыв между функциями`]);
       await fetchData(); //получение данных из БД и обработка перед выводом на экран
       setIsLoading(false); // Завершение загрузки

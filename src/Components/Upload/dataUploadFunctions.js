@@ -1,12 +1,8 @@
-// dataUploadFunctions.js
+// Upload/dataUploadFunctions.js
 import axios from 'axios';
-import fetchgoods from '../General/FromWildberries/fetchgoods';
 import saveandupdate from '../General/saveandupdate';
 import { gettableKeys } from '../General/tableactions';
-import apikeys from '../Private/userdata';
 
-
-const content_url = 'https://content-api.wildberries.ru/content/v2/get/cards/list';
 const crm_url = 'https://advert-api.wb.ru/adv/v1/promotion/count';
 
 /**
@@ -70,18 +66,42 @@ function processCards(wbData) {
 
   return { singleFields, photos };
 }
-export const uploadGoodsData = async (userContext, setStatus) => {
+export const downloadGoodsData = async (userContext, setStatus) => {
   try {
+    setStatus(prevStatus => [...prevStatus, `Запуск процедуры по товарам`]);
+    
+    let goodsData; // Объявляем переменную в общей области видимости
+    
+    try {
+      const response = await fetch('/api/content/getgoodsdata', {
+        headers: {
+          'Authorization': `Bearer ${userContext.userData.userInfo.token}`
+        }
+      });
+    
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    
+      goodsData = await response.json(); // Присваиваем значение
+    } catch (error) {
+      console.error('Error fetching goods data:', error);
+      throw error; // Пробрасываем ошибку дальше
+    }
 
-    setStatus(prevStatus => [...prevStatus,`Запуск процедуры по товарам`]);
-    const wbData = await fetchgoods(content_url, userContext.apikeycontent);
-    const { singleFields: goods, photos } = processCards(wbData.cards);
+    // Теперь goodsData доступна в этой области видимости
+    const { singleFields: goods, photos } = processCards(goodsData);
+    
     setStatus(prevStatus => [...prevStatus, `Данные из Вайлдберриз получены успешно(Товары)`]);
     await saveandupdate(goods, 'nmid', gettableKeys(goods), 'goods');
     await saveandupdate(photos, 'nmid', gettableKeys(photos), 'photos');
     setStatus(prevStatus => [...prevStatus, `Данные из Вайлдберриз обновлены(Товары)`]);
   } catch (error) {
-    setStatus(prevStatus => [...prevStatus, `Ошибка при загрузке данных(uploadGoodsData): ${error.response.data.detail}`]);
+    setStatus(prevStatus => [...prevStatus, 
+      `Ошибка при загрузке данных(uploadGoodsData): ${error.response?.data?.detail || error.message}`
+    ]);
+    throw error; // Пробрасываем ошибку для обработки выше
   }
+  
   return setStatus;
 };

@@ -28,9 +28,9 @@ const Login = () => {
   
       if (!response.ok) throw new Error('Неверные учетные данные');
   
-      const { token, login: username } = await response.json();
-      await login(token, username); // Передаём оба параметра
-      navigate('/goods');
+      const { token, login: username,userId } = await response.json();
+      await login(token, username, userId); // Передаём оба параметра
+      navigate('/');
     } catch (err) {
       setError(err.message);
       console.error('Ошибка авторизации:', err);

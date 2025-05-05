@@ -1,7 +1,9 @@
-import axios from 'axios';
+/* import axios from 'axios';
+import { useContext } from 'react';
+import { UserContext } from '../../Context/context.js'
+const { userData } = useContext(UserContext);
 
-
-async function fetchgoods  (url, apikey)  {
+async function fetchgoods  (url)  {
 const response = await axios.post(url, {
     // Тело запроса
     settings: {
@@ -26,7 +28,7 @@ const response = await axios.post(url, {
   }, {
     // Заголовки
     headers: {
-      'Authorization': `Bearer ${apikey}`
+      'Authorization': `Bearer ${contentAPIKEY}`
     }
   })
 
@@ -39,4 +41,4 @@ return response.data;
 
 };
 
-export default fetchgoods;
+export default fetchgoods; */

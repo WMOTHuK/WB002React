@@ -175,6 +175,62 @@ input:disabled {
 .formGroup {
   margin-bottom: 16px;
 }
+
+.apiKeysContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.apiKeyBlock {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.apiKeyInput {
+  width: 100%;
+  max-width: 600px;
+  min-height: 80px;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: monospace;
+  resize: vertical;
+}
+
+.saveButton {
+  display: block;
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.saveButton:hover {
+  background-color: #45a049;
+}
+
+.saveButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #ff4444;
+  background-color: #ffffff; /* Цвет фона контейнера */
+  border-radius: 10px; /* Скругление углов */
+  padding: 10px; /* Внутренний отступ */
+  margin: 50px; /* Внешний отступ */
+  gap: 10px;
+
+  box-shadow: 0px 0px 8px #ff4444; /* Тень для контейнера */
+}
   /* Адаптивность */
   @media (max-width: 768px) {
     .menuContainer {

@@ -44,7 +44,8 @@ export const UserProvider = ({ children }) => {
           apiKeys,
           userInfo: { 
             token,
-            login: decoded.login // Берём логин из распаршенного токена
+            login: decoded.login, // Берём логин из распаршенного токена
+            userId: decoded.userId // Добавляем userId
           }
         }));
       } catch (error) {
@@ -78,19 +79,21 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  const login = (token, username) => {
+  // Обновленный метод login с передачей userId
+  const login = (token, username, userId) => {
     localStorage.setItem('wb_token', token);
     setUserData(prev => ({
       ...prev,
       userInfo: {
         token,
-        login: username 
+        login: username,
+        userId: userId // Сохраняем userId
       },
-      apiKeys: null 
+      apiKeys: null
     }));
-    return initApiKeys(token); 
+    return initApiKeys(token);
   };
-
+  
   const logout = () => {
     localStorage.removeItem('wb_token');
     setUserData({

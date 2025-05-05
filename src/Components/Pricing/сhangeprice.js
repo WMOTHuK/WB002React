@@ -6,7 +6,7 @@ import '../../CSS/App.css';
 import { fetchWBdata } from '../General/FromWildberries/fromwildberries';
 import EditableTable from '../General/editabletable';
 import { gettableKeys } from '../General/tableactions';
-import { uploadGoodsData } from '../Upload/dataUploadFunctions';
+import { downloadGoodsData } from '../Upload/dataUploadFunctions';
 import { UserContext } from '../Context/context';
 
 // Функция для обработки данных
@@ -77,7 +77,7 @@ function Changeprice() {
       setIsLoading(true); // Начало загрузки
       setStatus([]);
       
-      await uploadGoodsData(userdata, setStatus);
+      await downloadGoodsData(userdata, setStatus);
       setStatus(prevStatus => [...prevStatus, `Перерыв между функциями`]);
       await fetchData();
       setIsLoading(false); // Завершение загрузки

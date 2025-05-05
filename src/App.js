@@ -6,6 +6,7 @@ import Login from './Components/Login/login';
 import Upload from './Components/Upload/upload';
 import Pricing from './Components/Pricing/pricing';
 import Goods from './Components/Goods/goods';
+import Apikeysupload from './Components/Apikeys/apikeysupload';
 import FI_reporting from './Components/Finance/fi_reporting';
 import FI_overheads from './Components/Finance/fi_overheads';
 import CRM_campaigns from './Components/CRM/campaign';
@@ -86,6 +87,7 @@ const MenuWrapper = () => {
                 />
               </li>
               <li><Link to="/Pricing">Изменение цен</Link></li>
+              <li><Link to="/apikeysupload">Ключи API</Link></li>
               <li>
                 <button onClick={() => {
                   if (window.confirm('Вы уверены, что хотите выйти?')) {
@@ -114,7 +116,7 @@ const LoginRoute = () => {
   const { userData, authChecked } = useContext(UserContext);
   
   if (!authChecked) return <div>Проверка авторизации...</div>;
-  return userData?.userInfo?.token ? <Navigate to="/goods" /> : <Login />;
+  return userData?.userInfo?.token ? <Navigate to="/" /> : <Login />;
 };
 
 function App() {
@@ -135,6 +137,7 @@ function App() {
               <Route path="/fi/overheads" element={<FI_overheads />} />
               <Route path="/crm/campaign" element={<CRM_campaigns />} />
               <Route path="/pricing" element={<Pricing />} />
+              <Route path="/apikeysupload" element={<Apikeysupload />} />
             </Route>
           </Routes>
         </div>
