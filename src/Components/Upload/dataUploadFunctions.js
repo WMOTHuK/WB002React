@@ -105,3 +105,38 @@ export const downloadGoodsData = async (userContext, setStatus) => {
   
   return setStatus;
 };
+
+export const getCompaigns = async (userContext, setStatus) => {
+  try {
+    setStatus(prevStatus => [...prevStatus, `Запуск процедуры по кампаниям`]);
+    
+    let campaigns = []; // Будем хранить результат здесь
+    
+    try {
+      const response = await fetch('/api/CRM/getcompaigns', {
+        headers: {
+          'Authorization': `Bearer ${userContext.userData.userInfo.token}`
+        }
+      });
+    
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    
+      const data = await response.json();
+      campaigns = data; // Присваиваем полученные данные
+    } catch (error) {
+      console.error('Error fetching campaign list:', error);
+      throw error;
+    }
+
+    setStatus(prevStatus => [...prevStatus, `Данные компаний получены успешно`]);
+    return campaigns; // Возвращаем массив кампаний
+    
+  } catch (error) {
+    setStatus(prevStatus => [...prevStatus, 
+      `Ошибка при загрузке данных(getCompaigns): ${error.response?.data?.detail || error.message}`
+    ]);
+    throw error;
+  }
+};
