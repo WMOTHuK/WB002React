@@ -4,6 +4,7 @@ import { UserContext } from "../Context/context";
 import EditableTable from "../General/editabletable.js";
 import { getCompaigns } from '../Upload/dataUploadFunctions.js';
 
+
 const CRM_Headers = ({ apiKey, param1, param2 /* другие параметры */ }) => {
   const [status, setStatus] = useState([]);
   const [tableData, setTableData] = useState([]);
@@ -25,7 +26,7 @@ const CRM_Headers = ({ apiKey, param1, param2 /* другие параметры
   const fetchCRM_headers = async () => {
     try {
       const campaigns = await getCompaigns(userdata, setStatus);
-      setTableData(campaigns);
+      setTableData(campaigns.data);
     } catch (err) {
       setError(err.message);
       console.error('Ошибка при загрузке данных:', err);
