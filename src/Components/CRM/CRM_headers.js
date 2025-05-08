@@ -13,8 +13,8 @@ const CRM_Headers = ({ apiKey, param1, param2 /* другие параметры
 
   // Конфигурация для EditableTable
   const tableConfig = {
-    tablename: 'CRM_HEADER',
-    tablekey: 'id', // Укажите поле, которое является уникальным ключом
+    tablename: 'crm_headers',
+    tablekey: 'advertid', // Укажите поле, которое является уникальным ключом
     renderInput: [], // Какие поля можно редактировать
     rendercheckbox: [], // Чекбоксы
     norender: [], // Скрытые поля
