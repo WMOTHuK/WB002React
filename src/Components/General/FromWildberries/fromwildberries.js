@@ -1,4 +1,4 @@
-import axios from 'axios';
+/* import axios from 'axios';
 
 export const fetchWBdata = async (url, apikey) => {
 
@@ -17,3 +17,4 @@ export const fetchWBdata = async (url, apikey) => {
   return response.data;
 };
 
+ */

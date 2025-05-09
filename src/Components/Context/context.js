@@ -38,10 +38,10 @@ export const UserProvider = ({ children }) => {
         const decoded = parseJwt(token);
         if (!decoded?.login) throw new Error('Invalid token');
         
-        const apiKeys = await initApiKeys(token);
+/*         const apiKeys = await initApiKeys(token); */
         setUserData(prev => ({
           ...prev,
-          apiKeys,
+/*           apiKeys, */
           userInfo: { 
             token,
             login: decoded.login, // Берём логин из распаршенного токена
@@ -57,7 +57,7 @@ export const UserProvider = ({ children }) => {
     };
     checkAuth();
   }, []);
-  const initApiKeys = async (token) => {
+/*   const initApiKeys = async (token) => {
     try {
       const response = await fetch('/api/auth/api-keys', {
         headers: { Authorization: `Bearer ${token}` }
@@ -77,7 +77,7 @@ export const UserProvider = ({ children }) => {
       console.error('Ошибка инициализации ключей:', error);
       throw error;
     }
-  };
+  }; */
 
   // Обновленный метод login с передачей userId
   const login = (token, username, userId) => {
@@ -89,15 +89,15 @@ export const UserProvider = ({ children }) => {
         login: username,
         userId: userId // Сохраняем userId
       },
-      apiKeys: null
+/*       apiKeys: null */
     }));
-    return initApiKeys(token);
+/*     return initApiKeys(token); */
   };
   
   const logout = () => {
     localStorage.removeItem('wb_token');
     setUserData({
-      apiKeys: null,
+/*       apiKeys: null, */
       userInfo: null,
       locale: 'RU'
     });
@@ -106,9 +106,9 @@ export const UserProvider = ({ children }) => {
   return (
     <UserContext.Provider value={{ 
       userData, 
-      initApiKeys, 
+/*       initApiKeys,  */
       logout,
-      login,
+      login, 
       authChecked
     }}>
       {authChecked ? children : <div>Проверка авторизации...</div>}

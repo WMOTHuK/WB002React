@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styles from '../../CSS/styles.module.css';
-import saveandupdate from './saveandupdate';
-import TimePicker from 'react-time-picker'; // Импортируем TimePicker
+import axios from 'axios';
+import { UserContext } from "../Context/context";
 
 // Компонент для отображения и редактирования данных
 function EditableTable({ 
@@ -26,41 +26,107 @@ function EditableTable({
         // Инициализируем все rendertimeinput поля
         ...Object.fromEntries(
           rendertimeinput.map(field => [field, row[field] || '00:00'])
+        ),
+        ...Object.fromEntries(
+          rendercheckbox.map(field => [field, row[field] === true || row[field] === "X"])
         )
       })) // <- Здесь закрываем все скобки
     );
     const [errorMessages, seterrors] = useState([]);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
     const [logdata, setlog] = useState([]);
+    const context = useContext(UserContext);
+    const token = context.userData.userInfo.token;
+    
   
     // Обработчик изменения данных в ячейке
     const handleChange = (e, index, field) => {
       const newData = [...rows];
       if (rendercheckbox.includes(field)) {
-        newData[index][field] = e.target.checked ? "X" : ""; // Для чекбоксов
+        newData[index][field] = e.target.checked; // Сохраняем boolean
       } else {
         newData[index][field] = e.target.value; // Для текстовых полей
       }
       setRows(newData);
     };
 
-    // Обработчик изменения времени
-    const handleTimeChange = (time, index, field) => {
-      const newData = [...rows];
-      newData[index][field] = time || '00:00';
-      setRows(newData);
+    const handleTimeChange = (event, index, field) => {
+      const timeValue = event?.target?.value || '00:00';
+      
+      setRows(prevRows => {
+        const newRows = [...prevRows];
+        newRows[index] = {
+          ...newRows[index],
+          [field]: timeValue
+        };
+        return newRows;
+      });
     };
-  
     // Объединяем все изменяемые поля для передачи изменений в БД
     const changefields = [...renderInput, ...rendertimeinput, ...rendercheckbox];
     
     // Обработчик сохранения изменений
     const handleSave = async () => {
-      const saveresults = await saveandupdate(rows, tablekey, changefields, tablename);
-      seterrors(saveresults);
-      setlog(rows);
+      try {
+        if (!token) {
+          throw new Error('Требуется авторизация');
+        }
+    
+        // Очищаем time-поля и исключаем поля _desc перед отправкой
+        const cleanRows = rows.map(row => {
+          const cleanRow = {};
+          
+          // Копируем только нужные поля
+          Object.keys(row).forEach(key => {
+            // Пропускаем поля с _desc
+            if (key.endsWith('_desc')) return;
+            
+            // Обрабатываем специальные time-поля
+            if (key === 'pause_time' || key === 'restart_time') {
+              cleanRow[key] = typeof row[key] === 'string' ? row[key] : '00:00';
+            } else {
+              cleanRow[key] = row[key];
+            }
+          });
+          
+          return cleanRow;
+        });
+    
+        const response = await axios.post('/api/DB/updatetable', {
+          rows: cleanRows,
+          tableName: tablename,
+          keyFields: tablekey
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+    
+        // Обработка ответа
+        if (response.data.success) {
+          seterrors(response.data.result.errors);
+          setlog([`Успешно: ${response.data.message}`]);
+        } else {
+          seterrors([`Ошибка сервера: ${response.data.error}`]);
+        }
+      } catch (error) {
+        // Детальная обработка ошибок
+        let errorMessage = 'Неизвестная ошибка';
+        
+        if (error.response) {
+          errorMessage = error.response.data?.error || error.response.statusText;
+        } else if (error.request) {
+          errorMessage = 'Нет ответа от сервера';
+        } else {
+          errorMessage = error.message;
+        }
+    
+        seterrors([`Ошибка сохранения: ${errorMessage}`]);
+        console.error('Полная ошибка:', error);
+      }
     };
-
+    
     // Функция для получения перевода заголовка, если он доступен
     const getTranslation = (key) => {
       // Находим объект в массиве translations, где colname равно key
@@ -90,14 +156,15 @@ function EditableTable({
     };
 
     const setAllCheckboxes = (field) => {
-      // Проверяем, все ли чекбоксы в столбце уже отмечены
-      const allChecked = rows.every(row => row[field] === "X");
-      const newValue = allChecked ? "" : "X"; // Если все отмечены, будем очищать, иначе - заполнять
-      const newData = rows.map(row => ({
+      const allChecked = rows.every(row => row[field] === true);
+      const newValue = !allChecked; // Инвертируем текущее состояние
+      
+      setRows(prevRows => 
+        prevRows.map(row => ({
           ...row,
           [field]: newValue
-      }));
-      setRows(newData);
+        }))
+      );
     };
 
     return (
@@ -128,10 +195,10 @@ function EditableTable({
                   .map(([field, value]) => (
                     <td className={`${styles.tabledata}`} key={field}>
                       {rendercheckbox.includes(field) ? (
-                        <input
+                       <input
                           className={`${styles.checkbox}`}
                           type="checkbox"
-                          checked={value === "X"}
+                          checked={!!value} // Приводим к boolean
                           onChange={(e) => handleChange(e, rowIndex, field)}
                         />
                       ) : renderInput.includes(field) ? (
@@ -143,15 +210,13 @@ function EditableTable({
                         />
                       ) : rendertimeinput.includes(field) ? (
 
-                          <input aria-label="Time" type="time"
+                        <input 
+                          aria-label="Time" 
+                          type="time"
                           className={`${styles.timepicker}`}
-                          onChange={(time) => handleTimeChange(time, rowIndex, field)}
-/*                           
-                          value={value}
-                          format="HH:mm"
-                          disableClock={true}
-                          clearIcon={null} */
-                          />
+                          onChange={(e) => handleTimeChange(e, rowIndex, field)}
+                          value={rows[rowIndex][field] || '00:00'} // Контролируемый компонент
+                        />
                       ) : img.includes(field) ? (
                         <div className={`${styles.tablephoto}`}>
                           <img
@@ -172,6 +237,11 @@ function EditableTable({
         <button onClick={handleSave}>Сохранить</button>            
         <div>
           {errorMessages.map((message, index) => (
+            <p key={index}>{message}</p>
+          ))}
+        </div>
+        <div>
+          {logdata.map((message, index) => (
             <p key={index}>{message}</p>
           ))}
         </div>

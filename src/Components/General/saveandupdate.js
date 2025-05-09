@@ -1,4 +1,4 @@
-import { gettablefrombd } from './Frombackend/frombackend';
+/* import { gettablefrombd } from './Frombackend/frombackend';
 import updaterow from './Tobackend/updaterow';
 import insertrow from './Tobackend/insertrow'; // Предполагаем, что функция импортирована
 
@@ -42,4 +42,4 @@ async function saveAndUpdate(rows, tablekey, renderInput, tablename) {
   return updateresult;
 }
 
-export default saveAndUpdate;
+export default saveAndUpdate; */

@@ -1,7 +1,11 @@
 // Upload/dataUploadFunctions.js
 import axios from 'axios';
+import { useContext } from 'react';
 import saveandupdate from '../General/saveandupdate';
 import { gettableKeys } from '../General/tableactions';
+import { UserContext } from "../Context/context.js";
+
+
 
 const crm_url = 'https://advert-api.wb.ru/adv/v1/promotion/count';
 
@@ -68,6 +72,7 @@ function processCards(wbData) {
 }
 export const downloadGoodsData = async (userContext, setStatus) => {
   try {
+    const token = userContext.userData.userInfo.token;
     setStatus(prevStatus => [...prevStatus, `Запуск процедуры по товарам`]);
     
     let goodsData; // Объявляем переменную в общей области видимости
@@ -93,8 +98,38 @@ export const downloadGoodsData = async (userContext, setStatus) => {
     const { singleFields: goods, photos } = processCards(goodsData);
     
     setStatus(prevStatus => [...prevStatus, `Данные из Вайлдберриз получены успешно(Товары)`]);
+
+
+    const responsegods = await axios.post('/api/DB/updatetable', {
+      rows: goods,
+      tableName: 'goods',
+      keyFields: 'nmid'
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    setStatus(prevStatus => [...prevStatus, responsegods.data.message]);
+
+    const responsephoto = await axios.post('/api/DB/updatetable', {
+      rows: photos,
+      tableName: 'photos',
+      keyFields: 'nmid'
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    setStatus(prevStatus => [...prevStatus, responsephoto.data.message]);
+/* 
     await saveandupdate(goods, 'nmid', gettableKeys(goods), 'goods');
     await saveandupdate(photos, 'nmid', gettableKeys(photos), 'photos');
+ */
+
+
     setStatus(prevStatus => [...prevStatus, `Данные из Вайлдберриз обновлены(Товары)`]);
   } catch (error) {
     setStatus(prevStatus => [...prevStatus, 
