@@ -17,7 +17,8 @@ const CRM_Headers = ({ apiKey, param1, param2 /* другие параметры
     tablename: 'crm_headers',
     tablekey: 'advertid', // Укажите поле, которое является уникальным ключом
     renderInput: [], // Какие поля можно редактировать
-    rendercheckbox: [], // Чекбоксы
+    rendercheckbox: ['active'], // Чекбоксы
+    rendertimeinput: ['pause_time', 'restart_time'],
     norender: [], // Скрытые поля
     translations: [], // Переводы заголовков
     img: [] // Поля с изображениями

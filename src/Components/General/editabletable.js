@@ -1,18 +1,34 @@
 import React, { useState } from 'react';
 import styles from '../../CSS/styles.module.css';
 import saveandupdate from './saveandupdate';
+import TimePicker from 'react-time-picker'; // Импортируем TimePicker
 
 // Компонент для отображения и редактирования данных
-function EditableTable({ tablename, tablekey, data, renderInput, rendercheckbox, norender, translations, img }) {
+function EditableTable({ 
+  tablename, 
+  tablekey, 
+  data, 
+  renderInput, 
+  rendertimeinput = [], // Добавляем новый необязательный параметр
+  rendercheckbox, 
+  norender, 
+  translations, 
+  img 
+}) {
     // Инициализируем состояние для хранения и изменения данных
     const [rows, setRows] = useState(
       (data || []).map(row => ({ 
-      ...row,
-      // Инициализируем все renderInput поля пустой строкой
-      ...Object.fromEntries(
-        renderInput.map(field => [field, row[field] || ''])
-      )
-    })));
+        ...row,
+        // Инициализируем все renderInput поля пустой строкой
+        ...Object.fromEntries(
+          renderInput.map(field => [field, row[field] || ''])
+        ),
+        // Инициализируем все rendertimeinput поля
+        ...Object.fromEntries(
+          rendertimeinput.map(field => [field, row[field] || '00:00'])
+        )
+      })) // <- Здесь закрываем все скобки
+    );
     const [errorMessages, seterrors] = useState([]);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
     const [logdata, setlog] = useState([]);
@@ -27,9 +43,16 @@ function EditableTable({ tablename, tablekey, data, renderInput, rendercheckbox,
       }
       setRows(newData);
     };
+
+    // Обработчик изменения времени
+    const handleTimeChange = (time, index, field) => {
+      const newData = [...rows];
+      newData[index][field] = time || '00:00';
+      setRows(newData);
+    };
   
     // Объединяем все изменяемые поля для передачи изменений в БД
-    const changefields = renderInput.concat(rendercheckbox);
+    const changefields = [...renderInput, ...rendertimeinput, ...rendercheckbox];
     
     // Обработчик сохранения изменений
     const handleSave = async () => {
@@ -37,15 +60,17 @@ function EditableTable({ tablename, tablekey, data, renderInput, rendercheckbox,
       seterrors(saveresults);
       setlog(rows);
     };
+
     // Функция для получения перевода заголовка, если он доступен
     const getTranslation = (key) => {
-          // Находим объект в массиве translations, где colname равно key
-    const translationObj = translations.find(obj => obj.colname === key);
-    
-    // Возвращаем значение value найденного объекта, если объект найден
-    // В противном случае возвращаем исходный ключ
-    return translationObj ? translationObj.value : key;
+      // Находим объект в массиве translations, где colname равно key
+      const translationObj = translations.find(obj => obj.colname === key);
+      
+      // Возвращаем значение value найденного объекта, если объект найден
+      // В противном случае возвращаем исходный ключ
+      return translationObj ? translationObj.value : key;
     };
+
     const requestSort = (key) => {
       let direction = 'ascending';
       if (sortConfig.key === key && sortConfig.direction === 'ascending') {
@@ -62,7 +87,8 @@ function EditableTable({ tablename, tablekey, data, renderInput, rendercheckbox,
           return 0;
       });
       setRows(sortedData);
-  };
+    };
+
     const setAllCheckboxes = (field) => {
       // Проверяем, все ли чекбоксы в столбце уже отмечены
       const allChecked = rows.every(row => row[field] === "X");
@@ -72,9 +98,8 @@ function EditableTable({ tablename, tablekey, data, renderInput, rendercheckbox,
           [field]: newValue
       }));
       setRows(newData);
-  };
+    };
 
-  
     return (
       <div>
         <table className={`${styles.comtable}`}>
@@ -116,6 +141,17 @@ function EditableTable({ tablename, tablekey, data, renderInput, rendercheckbox,
                           value={value}
                           onChange={(e) => handleChange(e, rowIndex, field)}
                         />
+                      ) : rendertimeinput.includes(field) ? (
+
+                          <input aria-label="Time" type="time"
+                          className={`${styles.timepicker}`}
+                          onChange={(time) => handleTimeChange(time, rowIndex, field)}
+/*                           
+                          value={value}
+                          format="HH:mm"
+                          disableClock={true}
+                          clearIcon={null} */
+                          />
                       ) : img.includes(field) ? (
                         <div className={`${styles.tablephoto}`}>
                           <img
