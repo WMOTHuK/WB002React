@@ -1,3 +1,4 @@
+// src/Components/CRM/CRM_headers.js
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { UserContext } from "../Context/context";
@@ -5,7 +6,7 @@ import EditableTable from "../General/editabletable.js";
 import { getCompaigns } from '../Upload/dataUploadFunctions.js';
 
 
-const CRM_Headers = ({ apiKey, param1, param2 /* другие параметры */ }) => {
+const CRM_Headers = () => {
   const [status, setStatus] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +39,7 @@ const CRM_Headers = ({ apiKey, param1, param2 /* другие параметры
 
   useEffect(() => {
     fetchCRM_headers();
-  }, [apiKey, param1, param2]); // Зависимости для повторного запроса
+  }, []); // Зависимости для повторного запроса
 
   if (loading) return <div>Загрузка данных...</div>;
   if (error) return <div>Ошибка: {error}</div>;
