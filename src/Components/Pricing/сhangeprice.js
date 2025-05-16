@@ -96,7 +96,7 @@ function Changeprice() {
       const wbData = await fetchWBdata(url, userdata.apikeyprice);
       setStatus(prevStatus => [...prevStatus, `Данные из Вайлдберриз получены успешно(Цены)`]);
       debugger;
-      const results = await sendDataToBackend('/api/save-data/prices', wbData);
+      const results = await sendDataToBackend('/api/content/updateprices', wbData);
       if (results) {
         setStatus(prevStatus => [...prevStatus, `Произведено обновление БД(Цены)`]);
       } else {
