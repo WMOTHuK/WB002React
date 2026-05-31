@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
-import { UserContext } from '../../context/UserContext';
+import { UserContext } from '../../context/context';
 import { fetchApiKeyTypes, fetchUserApiKeys, saveUserApiKey } from './apikeysService';
 
 export function useApiKeys() {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import styles from '../../CSS/Menu.module.css';
+import styles from '../../styles/Menu.module.css';
 
 const SubMenu = ({ items, isVisible, menuRef }) => {
   if (!isVisible) return null;

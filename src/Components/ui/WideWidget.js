@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../../CSS/styles.module.css';
+import styles from '../../styles/styles.module.css';
 
 const WideWidget = ({ title, children }) => {
   return (

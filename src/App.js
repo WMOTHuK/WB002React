@@ -10,10 +10,10 @@ import Apikeysupload from './features/apikeys/apikeysupload';
 import FI_reporting from './components/Finance/fi_reporting';
 import FI_overheads from './components/Finance/fi_overheads';
 import CRM_campaigns from './components/CRM/campaign';
-import styles from './CSS/Menu.module.css';
-import { UserProvider, UserContext } from './components/Context/context';
+import styles from './styles/Menu.module.css';
+import { UserProvider, UserContext } from './context/context';
 import SubMenu from './components/MenuStructure/SubMenu';
-import ProtectedRoute from './components/Auth/ProtectedRoute';
+import ProtectedRoute from './router/ProtectedRoute';
 import Register from './components/Register/Register';
 
 

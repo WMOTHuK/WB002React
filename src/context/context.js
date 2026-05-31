@@ -115,10 +115,3 @@ export const UserProvider = ({ children }) => {
     </UserContext.Provider>
   );
 };
-
-// Контекст для общих данных приложения
-export const appContext = React.createContext({
-  apiSettings: {},
-  globalConfig: {},
-  staticData: {}
-});

@@ -1,8 +1,8 @@
 //./Components/Register/Register.js
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../Context/context';
-import styles from '../../CSS/styles.module.css';
+import { UserContext } from '../../context/context';
+import styles from '../../styles/styles.module.css';
 
 const Register = () => {
   const [validationErrors, setValidationErrors] = useState({});

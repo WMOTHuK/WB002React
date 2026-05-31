@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
-import styles from '../../CSS/styles.module.css';
+import styles from '../../styles/styles.module.css';
 import sendDataToBackend from '../General/Tobackend/tobackend';
 import { gettablefrombd, gettablelocale } from '../General/Frombackend/frombackend';
-import '../../CSS/App.css';
+import '../../styles/App.css';
 import { fetchWBdata } from '../General/FromWildberries/fromwildberries';
 import EditableTable from '../General/editabletable';
 import { gettableKeys } from '../General/tableactions';
 import { downloadGoodsData } from '../Upload/dataUploadFunctions';
-import { UserContext } from '../Context/context';
+import { UserContext } from '../../context/context';
 
 // Функция для обработки данных
 async function getadddata(finalData) {

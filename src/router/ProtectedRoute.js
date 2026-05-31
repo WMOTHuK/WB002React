@@ -3,7 +3,7 @@ import React from 'react';
 
 import { useContext } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { UserContext } from '../Context/context';
+import { UserContext } from '../context/context';
 
 const ProtectedRoute = () => {
   const { userData, authChecked } = useContext(UserContext);

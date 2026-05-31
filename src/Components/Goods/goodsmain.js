@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import styles from "../../CSS/styles.module.css";
-import "../../CSS/App.css";
+import styles from "../../styles/styles.module.css";
+import "../../styles/App.css";
 import EditableTable from "../General/editabletable";
-import { UserContext } from "../Context/context";
+import { UserContext } from "../../context/context";
 import { downloadGoodsData } from "../Upload/dataUploadFunctions";
 
 const Goodsmain = () => {

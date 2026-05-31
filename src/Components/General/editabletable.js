@@ -1,8 +1,8 @@
 //src/Components/General/editabletable.js
 import React, { useState, useContext } from 'react';
-import styles from '../../CSS/styles.module.css';
+import styles from '../../styles/styles.module.css';
 import axios from 'axios';
-import { UserContext } from "../Context/context";
+import { UserContext } from "../../context/context";
 
 // Компонент для отображения и редактирования данных
 function EditableTable({ 
