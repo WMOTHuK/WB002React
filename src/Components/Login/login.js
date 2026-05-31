@@ -3,7 +3,7 @@ import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../Context/context';
 import styles from '../../CSS/styles.module.css';
-import WideWidget from '../Vidgets/WideWidget';
+import WideWidget from '../ui/WideWidget';
 
 const Login = () => {
   

@@ -1,5 +1,5 @@
 import React from 'react';
-import WideWidget from '../Vidgets/WideWidget';
+import WideWidget from '../ui/WideWidget';
 
 const FI_reporting = () => (
   <WideWidget title="Финансовая отчётность">

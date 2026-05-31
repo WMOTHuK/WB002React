@@ -1,7 +1,7 @@
 // src/Components/CRM/CRM_headers.js
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { UserContext } from "../Context/context";
+import { UserContext } from "../Context/context.js";
 import EditableTable from "../General/editabletable.js";
 import { getCompaigns } from '../Upload/dataUploadFunctions.js';
 

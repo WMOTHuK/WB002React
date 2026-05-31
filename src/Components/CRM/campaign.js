@@ -1,5 +1,5 @@
 import React from 'react';
-import WideWidget from '../Vidgets/WideWidget';
+import WideWidget from '../ui/WideWidget';
 import CRM_Headers from './CRM_headers';
 
 const CRM_campaigns = () => (

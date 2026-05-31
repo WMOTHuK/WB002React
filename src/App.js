@@ -1,20 +1,20 @@
 //app.js
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
-import Home from './Components/Home/home';
-import Login from './Components/Login/login';
-import Upload from './Components/Upload/upload';
-import Pricing from './Components/Pricing/pricing';
-import Goods from './Components/Goods/goods';
-import Apikeysupload from './Components/Apikeys/apikeysupload';
-import FI_reporting from './Components/Finance/fi_reporting';
-import FI_overheads from './Components/Finance/fi_overheads';
-import CRM_campaigns from './Components/CRM/campaign';
+import Home from './components/Home/home';
+import Login from './components/Login/login';
+import Upload from './components/Upload/upload';
+import Pricing from './components/Pricing/pricing';
+import Goods from './components/Goods/goods';
+import Apikeysupload from './features/apikeys/apikeysupload';
+import FI_reporting from './components/Finance/fi_reporting';
+import FI_overheads from './components/Finance/fi_overheads';
+import CRM_campaigns from './components/CRM/campaign';
 import styles from './CSS/Menu.module.css';
-import { UserProvider, UserContext } from './Components/Context/context';
-import SubMenu from './Components/MenuStructure/SubMenu';
-import ProtectedRoute from './Components/Auth/ProtectedRoute';
-import Register from './Components/Register/Register';
+import { UserProvider, UserContext } from './components/Context/context';
+import SubMenu from './components/MenuStructure/SubMenu';
+import ProtectedRoute from './components/Auth/ProtectedRoute';
+import Register from './components/Register/Register';
 
 
 const MenuWrapper = () => {
