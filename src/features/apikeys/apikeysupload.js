@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import WideWidget from '../../components/ui/WideWidget';
+import WideWidget from '../../components/ui/widewidget/WideWidget';
 import { useApiKeys } from './useApiKeys';
 import styles from '../../styles/styles.module.css';
 

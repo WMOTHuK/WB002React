@@ -1,4 +1,4 @@
-// Context/context.js
+// src/context/context.js
 // Контекст для данных пользователя
 import React, { createContext, useState, useEffect } from 'react';
 
@@ -37,11 +37,8 @@ export const UserProvider = ({ children }) => {
         // Парсим токен на клиенте
         const decoded = parseJwt(token);
         if (!decoded?.login) throw new Error('Invalid token');
-        
-/*         const apiKeys = await initApiKeys(token); */
         setUserData(prev => ({
           ...prev,
-/*           apiKeys, */
           userInfo: { 
             token,
             login: decoded.login, // Берём логин из распаршенного токена
@@ -57,27 +54,6 @@ export const UserProvider = ({ children }) => {
     };
     checkAuth();
   }, []);
-/*   const initApiKeys = async (token) => {
-    try {
-      const response = await fetch('/api/auth/api-keys', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      if (!response.ok) throw new Error('Ошибка получения ключей');
-      
-      const apiKeys = await response.json();
-      
-      setUserData(prev => ({
-        ...prev, 
-        apiKeys 
-      }));
-      
-      return apiKeys;
-    } catch (error) {
-      console.error('Ошибка инициализации ключей:', error);
-      throw error;
-    }
-  }; */
 
   // Обновленный метод login с передачей userId
   const login = (token, username, userId) => {
@@ -89,9 +65,8 @@ export const UserProvider = ({ children }) => {
         login: username,
         userId: userId // Сохраняем userId
       },
-/*       apiKeys: null */
+      apiKeys: null 
     }));
-/*     return initApiKeys(token); */
   };
   
   const logout = () => {
@@ -106,7 +81,6 @@ export const UserProvider = ({ children }) => {
   return (
     <UserContext.Provider value={{ 
       userData, 
-/*       initApiKeys,  */
       logout,
       login, 
       authChecked
