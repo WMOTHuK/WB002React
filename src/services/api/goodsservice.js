@@ -1,4 +1,4 @@
-import { getTableFromDB } from './tableservice'
+import { getTableFromDB } from './tableService'
 
 export const downloadGoodsData = async (userContext, setStatus) => {
   try {

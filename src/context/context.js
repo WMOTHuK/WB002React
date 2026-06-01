@@ -25,7 +25,7 @@ export const UserProvider = ({ children }) => {
   const [authChecked, setAuthChecked] = useState(false); // Флаг проверки авторизации
 
   // Проверка токена при монтировании компонента
-  useEffect(() => {
+useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem('wb_token');
       if (!token) {
@@ -34,26 +34,26 @@ export const UserProvider = ({ children }) => {
       }
   
       try {
-        // Парсим токен на клиенте
         const decoded = parseJwt(token);
         if (!decoded?.login) throw new Error('Invalid token');
         setUserData(prev => ({
           ...prev,
           userInfo: { 
             token,
-            login: decoded.login, // Берём логин из распаршенного токена
-            userId: decoded.userId // Добавляем userId
+            login: decoded.login,
+            userId: decoded.userId
           }
         }));
       } catch (error) {
         console.error('Auth check failed:', error);
         localStorage.removeItem('wb_token');
+        setUserData(prev => ({ ...prev, userInfo: null })); // ← добавь
       } finally {
-        setAuthChecked(true);
+        setAuthChecked(true); // ← теперь после try/catch, userInfo уже установлен
       }
     };
     checkAuth();
-  }, []);
+}, []);
 
   // Обновленный метод login с передачей userId
   const login = (token, username, userId) => {

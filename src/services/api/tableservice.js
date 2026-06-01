@@ -14,21 +14,23 @@ export const getTableFromDB = async (tablename) => {
     }
 };
 
-export const getTableLocale = async (tablekeys, locale) => {
-      // Использование URLSearchParams для формирования параметров запроса
-  const params = new URLSearchParams({
-    tablekeys: tablekeys.join(','), // Преобразуем массив в строку, разделенную запятыми
-    locale: locale
-  }).toString();
-
-  // Формирование URL для запроса
-  const url = `/api/DB/gettablelocale?${params}`;
+export const getTableLocale = async (tablekeys, locale, token) => {
+    const params = new URLSearchParams({
+        tablekeys: tablekeys.join(','),
+        locale: locale
+    }).toString();
+    const url = `/api/DB/gettablelocale?${params}`;
+    
     try {
-    const response = await axios.get(url);
-    return response.data; // Возвращаем данные, полученные от сервера
-} catch (error) {
-    return ('Ошибка при отправке данных на сервер:')
-}};
+        const response = await axios.get(url, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Ошибка загрузки переводов:', error);
+        return []; // ← возвращаем пустой массив, а не строку
+    }
+};
 
 export const insertrow = async ( tablename, rowData) => {
     try {
