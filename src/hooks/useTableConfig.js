@@ -30,9 +30,7 @@ export function useTableConfig(navigate, locale = 'RU', mode = 'view', token) {
     try {
       const keys = getTableKeys(data);
       const translations = await getTableLocale(keys, locale, token);
-      console.log('Translations:', translations);
-      console.log('Is array:', Array.isArray(translations));
-
+      
       const onChange = onDataChange
         ? (field, value, row) => onDataChange(field, value, row)
         : undefined;

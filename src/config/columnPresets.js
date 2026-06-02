@@ -6,10 +6,10 @@
  */
 export const columnTypes = {
   link:      ['nmid', 'advertid'],
-  image:     ['big'],
+  image:     ['photo'],
   checkbox:  ['active', 'deleted'],
-  number:    ['sprice', 'price', 'discount', 'currentprice', 'dayprice', 'daydisc', 'nightprice', 'nightdisc', 'subjectid', 'imtid'],
-  date:      ['pause_time', 'restart_time'],
+  number:    ['current_cost', 'price', 'discount', 'currentprice', 'dayprice', 'daydisc', 'nightprice', 'nightdisc', 'subjectid', 'imtid'],
+  date:      ['pause_time', 'restart_time', 'change_date'],
   text:      [],
 };
 
@@ -17,13 +17,14 @@ export const columnTypes = {
  * Fields that become editable when mode === 'edit'.
  */
 export const editableFields = [
-  'sprice',
+  'current_cost',
   'dayprice',
   'daydisc',
   'nightprice',
   'nightdisc',
   'active',
   'deleted',
+  'change_date'
 ];
 
 /**
@@ -51,7 +52,5 @@ export const linkUrls = {
  * All other fields follow in their natural order from the data.
  */
 export const columnOrder = [
-  'big',
-  'title',
-  'nmid',
+
 ];

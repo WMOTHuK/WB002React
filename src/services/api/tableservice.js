@@ -40,7 +40,6 @@ export const insertrow = async ( tablename, rowData) => {
             rowData
         };
         const response = await axios.post(url, zdata);
-        console.log('Ответ сервера:', response.data); // Выводим в консоль для проверки
         debugger;
         return response.data.message; // Возвращаем данные, полученные от сервера
     } catch (error) {
@@ -53,7 +52,6 @@ export const insertrow = async ( tablename, rowData) => {
 /*   const postapi = async  (url, tablename, fieldsToUpdate, rowData) => {
     try {
         const response = await axios.post(url, tablename, fieldsToUpdate, rowData);
-        console.log('Ответ сервера:', response.data); // Выводим в консоль для проверки
         debugger;
         return response.data; // Возвращаем данные, полученные от сервера
     } catch (error) {

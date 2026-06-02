@@ -131,6 +131,19 @@ export default function DataTable({
                 );
               }
               return value;
+
+            case 'date':
+              if (col.editable) {
+                return (
+                  <input
+                    type="date"
+                    className={styles.input}
+                    value={value ? value.slice(0, 10) : ''}
+                    onChange={(e) => col.onChange?.(e.target.value, rowData)}
+                  />
+                );
+              }
+              return value ? new Date(value).toLocaleDateString('ru-RU') : '';
           }
         },
       };
