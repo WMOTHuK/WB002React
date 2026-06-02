@@ -28,10 +28,10 @@ const GoodsMain = () => {
   // Custom save function for goods
   const saveGoodsRow = useCallback(async (row) => {
     const token = userdata.userData?.userInfo?.token;
-    await axios.post('/api/DB/update_cost_price', {
+    await axios.post('/api/content/update_cost_price', {
       vendorcode: row.vendorcode,
-      current_cost: row.current_cost,
-      change_date: row.change_date,
+      new_cost: row.current_cost,
+      start_date: row.change_date,
     }, {
       headers: { Authorization: `Bearer ${token}` }
     });
