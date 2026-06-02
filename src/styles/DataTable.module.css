@@ -1,13 +1,15 @@
 
 .wrapper {
-  width: 100%;
+  display: flex;
+  justify-content: center;
   overflow-x: auto;
 }
 
 .table {
-  width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  width: auto;
+  margin: 0 auto;
 }
 
 .th {
@@ -48,10 +50,16 @@
   background: #eef5ff;
 }
 
-/* Ячейки */
+/* Cells */
+:root {
+  --col-img-width: 70px;
+  --col-checkbox-width: 18px;
+  --td-padding: 16px; /* 8px left + 8px right */
+}
+
 .img {
-  width: 50px;
-  height: 50px;
+  width: var(--col-img-width);
+  height: 90px;
   object-fit: cover;
   border-radius: 4px;
 }
@@ -67,7 +75,7 @@
 }
 
 .checkbox {
-  width: 18px;
+  width: var(--col-checkbox-width);
   height: 18px;
   cursor: pointer;
 }

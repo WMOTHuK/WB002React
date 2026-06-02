@@ -9,22 +9,49 @@ import {
 } from '@tanstack/react-table';
 import styles from '../../styles/DataTable.module.css';
 
+
+function getColWidth(colType) {
+  if (colType === 'image') {
+    const imgWidth = getComputedStyle(document.documentElement)
+      .getPropertyValue('--col-img-width')
+      .trim();
+    const padding = getComputedStyle(document.documentElement)
+      .getPropertyValue('--td-padding')
+      .trim();
+    return parseInt(imgWidth) + parseInt(padding);
+  }
+  if (colType === 'checkbox') {
+    const cbWidth = getComputedStyle(document.documentElement)
+      .getPropertyValue('--col-checkbox-width')
+      .trim();
+    const padding = getComputedStyle(document.documentElement)
+      .getPropertyValue('--td-padding')
+      .trim();
+    return parseInt(cbWidth) + parseInt(padding);
+  }
+  return null; // автоширина
+}
+
+
+
 /**
- * Universal data table built on TanStack Table.
- *
- * Column shape (from buildTableConfig):
- * {
- *   accessorKey: string,
- *   header:      string,
- *   type:        'text' | 'number' | 'checkbox' | 'image' | 'link' | 'date' | 'custom',
- *   editable?:   boolean,
- *   width?:      number,
- *   sortable?:   boolean,
- *   onChange?:   (value, row) => void,
- *   onLinkClick?:(row) => void,
- *   cellRender?: (value, row) => JSX,   // for type 'custom'
- * }
+ * Calculate optimal column width based on the longest value in data.
  */
+function calcColumnWidth(accessorKey, header, data, colType, min = 80, max = 300) {
+  const fixedWidth = getColWidth(colType);
+  if (fixedWidth) return fixedWidth;
+
+  let maxLen = String(header).length;
+
+  data.forEach(row => {
+    const val = row[accessorKey];
+    const len = val != null ? String(val).length : 0;
+    if (len > maxLen) maxLen = len;
+  });
+
+  return Math.min(Math.max(maxLen * 8 + 40, min), max);
+}
+
 export default function DataTable({
   data = [],
   columns = [],
@@ -35,15 +62,13 @@ export default function DataTable({
 
   const tableColumns = useMemo(() => {
     return columns.map(col => {
-      // Auto-width: header length * 10 + padding, clamped between 80 and 300
-      const headerLen = String(col.header).length;
-      const autoWidth = Math.min(Math.max(headerLen * 10 + 30, 80), 300);
+      const width = col.width || calcColumnWidth(col.accessorKey, col.header, data, col.type);
 
       return {
         accessorKey: col.accessorKey,
         header: col.header,
         enableSorting: col.sortable !== false && enableSorting,
-        size: col.width || autoWidth,
+        size: width,
         cell: ({ getValue, row }) => {
           const value = getValue();
           const rowData = row.original;
@@ -66,7 +91,12 @@ export default function DataTable({
               return (
                 <span
                   className={styles.link}
-                  onClick={() => col.onLinkClick?.(rowData)}
+                  onClick={(e) => {
+                    e.stopPropagation(); // ← остановить всплытие, чтобы onRowClick не сработал
+                    if (col.onLinkClick) {
+                      col.onLinkClick(rowData);
+                    }
+                  }}
                 >
                   {value}
                 </span>
@@ -105,7 +135,7 @@ export default function DataTable({
         },
       };
     });
-  }, [columns, enableSorting]);
+  }, [columns, data, enableSorting]);
 
   const table = useReactTable({
     data,
@@ -142,11 +172,7 @@ export default function DataTable({
         </thead>
         <tbody>
           {table.getRowModel().rows.map(row => (
-            <tr
-              key={row.id}
-              className={onRowClick ? styles.clickableRow : styles.row}
-              onClick={() => onRowClick?.(row.original)}
-            >
+            <tr key={row.id} className={styles.row}>
               {row.getVisibleCells().map(cell => (
                 <td key={cell.id} className={styles.td}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}

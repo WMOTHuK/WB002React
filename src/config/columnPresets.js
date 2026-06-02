@@ -34,3 +34,24 @@ export const excludedFields = [
   'imtid',
   'subjectid',
 ];
+
+/**
+ * URL builders for link-type fields.
+ * Each function receives the row data and returns a URL.
+ */
+export const linkUrls = {
+  nmid: (row) => `https://www.wildberries.ru/catalog/${row.nmid}/detail.aspx?targetUrl=GP`,
+  advertid: (row) => `/adverts/${row.advertid}`,
+  // user_id:  (row) => `/users/${row.user_id}`,
+};
+
+/**
+ * Column display order.
+ * Fields listed here appear first, in this exact order.
+ * All other fields follow in their natural order from the data.
+ */
+export const columnOrder = [
+  'big',
+  'title',
+  'nmid',
+];

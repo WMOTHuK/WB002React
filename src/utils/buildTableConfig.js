@@ -1,6 +1,5 @@
-// src/utils/buildTableConfig.js
 
-import { columnTypes, editableFields, excludedFields } from '../config/columnPresets';
+import { columnTypes, editableFields, excludedFields, linkUrls, columnOrder } from '../config/columnPresets';
 
 /**
  * Resolve the type of a field by its accessorKey.
@@ -14,6 +13,22 @@ function getFieldType(key) {
 }
 
 /**
+ * Sort keys: priority fields first (in columnOrder order),
+ * then the rest in natural order.
+ */
+function sortKeys(keys) {
+  return [...keys].sort((a, b) => {
+    const indexA = columnOrder.indexOf(a);
+    const indexB = columnOrder.indexOf(b);
+
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB;   // both in list → follow list order
+    if (indexA !== -1) return -1;                                   // only a in list → a first
+    if (indexB !== -1) return 1;                                    // only b in list → b first
+    return 0;                                                        // neither → keep natural order
+  });
+}
+
+/**
  * Build a columns array for DataTable.
  *
  * @param {string[]}   keys         – field names extracted from data
@@ -24,15 +39,14 @@ function getFieldType(key) {
  * @returns {object[]} columns compatible with DataTable
  */
 export function buildTableConfig({ keys, translations = [], mode = 'view', navigate, onChange }) {
-    const translationMap = {};
-    if (Array.isArray(translations)) {
+  const translationMap = {};
+  if (Array.isArray(translations)) {
     translations.forEach(t => {
-        translationMap[t.colname] = t.value;
+      translationMap[t.colname] = t.value;
     });
-    }
+  }
 
-  return keys
-    .filter(key => !excludedFields.includes(key))  // ← фильтруем скрытые
+  return sortKeys(keys.filter(key => !excludedFields.includes(key)))
     .map(key => {
       const type = getFieldType(key);
       const column = {
@@ -41,23 +55,28 @@ export function buildTableConfig({ keys, translations = [], mode = 'view', navig
         type,
       };
 
-    // Make editable in 'edit' mode
-    if (mode === 'edit' && editableFields.includes(key)) {
-      column.editable = true;
-      column.onChange = (value, row) => {
-        if (onChange) onChange(key, value, row);
-      };
-    }
+      // Make editable in 'edit' mode
+      if (mode === 'edit' && editableFields.includes(key)) {
+        column.editable = true;
+        column.onChange = (value, row) => {
+          if (onChange) onChange(key, value, row);
+        };
+      }
 
-    // Link columns – navigate on click
-    if (type === 'link') {
-    column.onLinkClick = (row) => {
-        const section = key === 'advertid' ? 'adverts' : 'goods';
-        if (navigate) {
-        navigate(`/${section}/${row[key]}`);
-        }
-    };
-    }
-    return column;
-  });
+      // Link columns – navigate or open external URL
+      if (type === 'link') {
+        const urlBuilder = linkUrls[key];
+        column.onLinkClick = (row) => {
+          if (!urlBuilder) return;
+          const url = urlBuilder(row);
+          if (url.startsWith('http')) {
+            window.open(url, '_blank');
+          } else if (navigate) {
+            navigate(url);
+          }
+        };
+      }
+
+      return column;
+    });
 }

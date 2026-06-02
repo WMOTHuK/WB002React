@@ -57,7 +57,6 @@ const GoodsMain = () => {
       <DataTable
         data={tableData}
         columns={columns}
-        onRowClick={(row) => navigate(`/goods/${row.nmid}`)}
       />
     </div>
   );
