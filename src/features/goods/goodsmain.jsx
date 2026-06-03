@@ -1,6 +1,6 @@
 // src/features/goods/GoodsMain.jsx
 
-import React, { useState, useEffect, useContext, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useContext, useMemo, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styles from '../../styles/styles.module.css';
@@ -42,12 +42,17 @@ const GoodsMain = () => {
     getRowId: (row) => String(row.nmid),
   });
 
+  // Сохраняем tableData в ref, чтобы onChange не зависел от состояния
+  const tableDataRef = useRef(tableData);
+  tableDataRef.current = tableData;
+
   const handleCellChange = useCallback((field, value, row) => {
-    setTableData(prev =>
-      prev.map(item =>
+    setTableData(prev => {
+      const newData = prev.map(item =>
         item.nmid === row.nmid ? { ...item, [field]: value } : item
-      )
-    );
+      );
+      return newData;
+    });
     markChanged(row);
   }, [markChanged]);
 

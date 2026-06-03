@@ -9,7 +9,9 @@ import {
 } from '@tanstack/react-table';
 import styles from '../../styles/DataTable.module.css';
 
-
+/**
+ * Calculate optimal column width based on the longest value in data.
+ */
 function getColWidth(colType) {
   if (colType === 'image') {
     const imgWidth = getComputedStyle(document.documentElement)
@@ -29,14 +31,9 @@ function getColWidth(colType) {
       .trim();
     return parseInt(cbWidth) + parseInt(padding);
   }
-  return null; // автоширина
+  return null;
 }
 
-
-
-/**
- * Calculate optimal column width based on the longest value in data.
- */
 function calcColumnWidth(accessorKey, header, data, colType, min = 80, max = 300) {
   const fixedWidth = getColWidth(colType);
   if (fixedWidth) return fixedWidth;
@@ -51,6 +48,83 @@ function calcColumnWidth(accessorKey, header, data, colType, min = 80, max = 300
 
   return Math.min(Math.max(maxLen * 8 + 40, min), max);
 }
+
+/**
+ * Memoized table cell – prevents re-renders on parent data changes.
+ * Uses defaultValue + onBlur to avoid losing focus during editing.
+ */
+const TableCell = React.memo(({ col, value, rowData }) => {
+  switch (col.type) {
+    case 'checkbox':
+      return (
+        <input
+          type="checkbox"
+          className={styles.checkbox}
+          checked={!!value}
+          onChange={(e) => col.onChange?.(e.target.checked, rowData)}
+        />
+      );
+
+    case 'image':
+      return value ? <img src={value} alt="" className={styles.img} /> : null;
+
+    case 'link':
+      return (
+        <span
+          className={styles.link}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (col.onLinkClick) col.onLinkClick(rowData);
+          }}
+        >
+          {value}
+        </span>
+      );
+
+    case 'number':
+      if (col.editable) {
+        return (
+          <input
+            type="number"
+            className={styles.input}
+            defaultValue={value ?? ''}
+            onBlur={(e) => col.onChange?.(Number(e.target.value), rowData)}
+          />
+        );
+      }
+      return value;
+
+    case 'date':
+      if (col.editable) {
+        return (
+          <input
+            type="date"
+            className={styles.input}
+            defaultValue={value ? value.slice(0, 10) : ''}
+            onBlur={(e) => col.onChange?.(e.target.value, rowData)}
+          />
+        );
+      }
+      return value ? new Date(value).toLocaleDateString('ru-RU') : '';
+
+    case 'custom':
+      return col.cellRender ? col.cellRender(value, rowData) : value;
+
+    case 'text':
+    default:
+      if (col.editable) {
+        return (
+          <input
+            type="text"
+            className={styles.input}
+            defaultValue={value ?? ''}
+            onBlur={(e) => col.onChange?.(e.target.value, rowData)}
+          />
+        );
+      }
+      return value;
+  }
+});
 
 export default function DataTable({
   data = [],
@@ -73,78 +147,7 @@ export default function DataTable({
           const value = getValue();
           const rowData = row.original;
 
-          switch (col.type) {
-            case 'checkbox':
-              return (
-                <input
-                  type="checkbox"
-                  className={styles.checkbox}
-                  checked={!!value}
-                  onChange={(e) => col.onChange?.(e.target.checked, rowData)}
-                />
-              );
-
-            case 'image':
-              return value ? <img src={value} alt="" className={styles.img} /> : null;
-
-            case 'link':
-              return (
-                <span
-                  className={styles.link}
-                  onClick={(e) => {
-                    e.stopPropagation(); // ← остановить всплытие, чтобы onRowClick не сработал
-                    if (col.onLinkClick) {
-                      col.onLinkClick(rowData);
-                    }
-                  }}
-                >
-                  {value}
-                </span>
-              );
-
-            case 'number':
-              if (col.editable) {
-                return (
-                  <input
-                    type="number"
-                    className={styles.input}
-                    value={value ?? ''}
-                    onChange={(e) => col.onChange?.(Number(e.target.value), rowData)}
-                  />
-                );
-              }
-              return value;
-
-            case 'custom':
-              return col.cellRender ? col.cellRender(value, rowData) : value;
-
-            case 'text':
-            default:
-              if (col.editable) {
-                return (
-                  <input
-                    type="text"
-                    className={styles.input}
-                    value={value ?? ''}
-                    onChange={(e) => col.onChange?.(e.target.value, rowData)}
-                  />
-                );
-              }
-              return value;
-
-            case 'date':
-              if (col.editable) {
-                return (
-                  <input
-                    type="date"
-                    className={styles.input}
-                    value={value ? value.slice(0, 10) : ''}
-                    onChange={(e) => col.onChange?.(e.target.value, rowData)}
-                  />
-                );
-              }
-              return value ? new Date(value).toLocaleDateString('ru-RU') : '';
-          }
+          return <TableCell col={col} value={value} rowData={rowData} />;
         },
       };
     });
