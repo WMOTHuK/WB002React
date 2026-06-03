@@ -5,8 +5,8 @@
  * Any field not listed here defaults to 'text'.
  */
 export const columnTypes = {
-  link:      ['nmid', 'advertid'],
-  image:     ['photo'],
+  link:      ['nmid', 'advertid', 'ozid'],
+  image:     ['card_photo'],
   checkbox:  ['active', 'deleted'],
   number:    ['current_cost', 'price', 'discount', 'currentprice', 'dayprice', 'daydisc', 'nightprice', 'nightdisc', 'subjectid', 'imtid'],
   date:      ['pause_time', 'restart_time', 'change_date'],
@@ -42,7 +42,8 @@ export const excludedFields = [
  */
 export const linkUrls = {
   nmid: (row) => `https://www.wildberries.ru/catalog/${row.nmid}/detail.aspx?targetUrl=GP`,
-  advertid: (row) => `/adverts/${row.advertid}`,
+  ozid: (row) => `https://www.ozon.ru/product/${row.ozid}`
+  //advertid: (row) => `/adverts/${row.advertid}`,
   // user_id:  (row) => `/users/${row.user_id}`,
 };
 
