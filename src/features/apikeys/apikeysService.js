@@ -1,4 +1,4 @@
-const API_URL = '/api/auth';
+const API_URL = '/api/apikeys';
 
 /**
  * Get all key types
@@ -6,7 +6,7 @@ const API_URL = '/api/auth';
 export async function fetchApiKeyTypes(token) {
   const response = await fetch(`${API_URL}/getapikeytypes`, {
     headers: {
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`  
     }
   });
 
