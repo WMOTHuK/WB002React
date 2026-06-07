@@ -1,3 +1,4 @@
+//src/pages/upload/upload.jsx
 import React from 'react';
 import WideWidget from '../../components/ui/widewidget/WideWidget';
 

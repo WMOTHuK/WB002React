@@ -8,7 +8,8 @@ import styles from '../../styles/Menu.module.css';
 const subMenuItems = {
   FI: [
     { path: "/fi/reports", label: "Отчеты" },
-    { path: "/fi/overheads", label: "Накладные расходы" }
+    { path: "/fi/overheads/types", label: "Типы накладных" },
+    { path: "/fi/overheads/values", label: "Значения накладных" },
   ],
   CRM: [
     { path: "/crm/campaign", label: "Рекламные компании" }
