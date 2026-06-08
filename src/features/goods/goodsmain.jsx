@@ -81,7 +81,7 @@ const GoodsMain = () => {
   return (
     <div className={styles.vidget}>
       <div>{status.map((line, i) => <p key={i}>{line}</p>)}</div>
-      <h2>Product data</h2>
+      <h2>Информация о товарах</h2>
       <DataTable data={tableData} columns={columns} />
     </div>
   );

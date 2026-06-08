@@ -10,7 +10,7 @@ export const columnTypes = {
   checkbox:  ['active', 'deleted'],
   number:    ['current_cost', 'price', 'discount', 'currentprice', 'dayprice', 'daydisc', 'nightprice', 'nightdisc', 'subjectid', 'imtid'],
   date:      ['pause_time', 'restart_time', 'change_date'],
-  text:      [],
+  text:      [ 'oh_name', 'oh_desc'],
 };
 
 /**
@@ -34,6 +34,8 @@ export const editableFields = [
 export const excludedFields = [
   'imtid',
   'subjectid',
+  'id',
+  'ohcat_id'
 ];
 
 /**
@@ -55,3 +57,16 @@ export const linkUrls = {
 export const columnOrder = [
 
 ];
+
+export const inputStyles = {
+  oh_name:        'inputMedium',
+  oh_description: 'textarea',  // будет рендериться как <textarea>
+  current_cost:   'inputShort',
+  change_date:    'inputShort',
+  title:          'inputLong',
+  vendorcode:     'inputMedium',
+};
+
+export const cellStyles = {
+  oh_name: 'bold',
+};

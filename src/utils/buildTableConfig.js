@@ -1,5 +1,4 @@
-
-import { columnTypes, editableFields, excludedFields, linkUrls, columnOrder } from '../config/columnPresets';
+import { columnTypes, editableFields, excludedFields, linkUrls, columnOrder, inputStyles, cellStyles } from '../config/columnPresets';
 
 /**
  * Resolve the type of a field by its accessorKey.
@@ -55,9 +54,16 @@ export function buildTableConfig({ keys, translations = [], mode = 'view', navig
         type,
       };
 
+
+      if (cellStyles[key]) {
+        column.cellStyle = cellStyles[key];
+      }
+      
       // Make editable in 'edit' mode
       if (mode === 'edit' && editableFields.includes(key)) {
         column.editable = true;
+        column.inputStyle = inputStyles[key] || 'input'; // подхватываем стиль
+        column.type = inputStyles[key] === 'textarea' ? 'textarea' : column.type;
         column.onChange = (value, row) => {
           if (onChange) onChange(key, value, row);
         };

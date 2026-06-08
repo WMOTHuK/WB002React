@@ -1,88 +1,126 @@
 // src/pages/finance/FI_OverheadTypes.jsx
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useContext } from 'react';
 import WideWidget from '../../components/ui/widewidget/WideWidget';
 import DataTable from '../../components/table/DataTable';
-import { useOverheadTypes } from '../../hooks/useOverheadTypes';
-import { useRowSave } from '../../hooks/useRowSave';
+import { UserContext } from '../../context/context';
+import { fetchOverheadTypes, addOverheadType } from '../../services/api/financeService';
+import { getTableKeys } from '../../utils/tableHelpers';
+import { getTableLocale } from '../../services/api/tableService';
+import { buildTableConfig } from '../../utils/buildTableConfig';
 import styles from '../../styles/styles.module.css';
 
 const FI_OverheadTypes = () => {
-  const { types, loading, error, addType } = useOverheadTypes();
+  const userdata = useContext(UserContext);
+  const token = userdata.userData?.userInfo?.token;
+  const locale = userdata.userData?.locale || 'RU';
 
-  // ---- Таблица просмотра ----
-  const viewColumns = useMemo(() => [
-    {
-      accessorKey: 'name',
-      header: 'Название',
-      type: 'text',
-    },
-    {
-      accessorKey: 'description',
-      header: 'Описание',
-      type: 'text',
-    },
-  ], []);
+  const [types, setTypes] = useState([]);
+  const [columns, setColumns] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // ---- Форма добавления (одна пустая строка) ----
-  const [newRow, setNewRow] = useState({ name: '', description: '' });
+  // Форма добавления
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState(null);
 
-  const handleNewCellChange = (field, value) => {
-    setNewRow(prev => ({ ...prev, [field]: value }));
+  // Загрузка данных и построение колонок
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const data = await fetchOverheadTypes(locale, token);
+      setTypes(data);
+
+      if (data.length > 0) {
+        const keys = getTableKeys(data);
+        const translations = await getTableLocale(keys, locale, token);
+        const cols = buildTableConfig({
+          keys,
+          translations,
+          mode: 'view', // только просмотр
+        });
+        setColumns(cols);
+      }
+    } catch (err) {
+      setError(err.response?.data?.error || err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Переиспользуем хук сохранения с кастомной saveFn
-  const { markChanged, actionsColumn } = useRowSave({
-    saveFn: async (row) => {
-      const result = await addType(row);
-      if (result.success) {
-        setNewRow({ name: '', description: '' }); // очищаем форму
-      } else {
-        throw new Error(result.error); // чтобы хук показал ошибку
-      }
-    },
-    getRowId: () => 'new', // одна строка
-  });
+  useEffect(() => {
+    loadData();
+  }, []);
 
-  const editColumns = useMemo(() => [
-    {
-      accessorKey: 'name',
-      header: 'Название',
-      type: 'text',
-      editable: true,
-      onChange: (value) => handleNewCellChange('name', value),
-    },
-    {
-      accessorKey: 'description',
-      header: 'Описание',
-      type: 'text',
-      editable: true,
-      onChange: (value) => handleNewCellChange('description', value),
-    },
-    actionsColumn,
-  ], [actionsColumn]);
+  // Добавление нового типа
+  const handleAdd = async (e) => {
+    e.preventDefault();
+    if (!name.trim()) {
+      setFormError('Название обязательно');
+      return;
+    }
+    setSaving(true);
+    setFormError(null);
+
+    try {
+      await addOverheadType({ name: name.trim(), description: description.trim(), locale }, token);
+      setName('');
+      setDescription('');
+      await loadData(); // перезагружаем список и колонки
+    } catch (err) {
+      setFormError(err.response?.data?.error || err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   if (loading) return <WideWidget title="Типы накладных расходов"><div>Загрузка...</div></WideWidget>;
-  if (error) return <WideWidget title="Типы накладных расходов"><div className={styles.error}>Ошибка: {error}</div></WideWidget>;
 
-return (
-<WideWidget title="Типы накладных расходов">
-    {error && <div className={styles.error}>Ошибка: {error}</div>}
+  return (
+    <WideWidget title="Типы накладных расходов">
+      <div className={styles.contentCentered}>
+        {error && <div className={styles.error}>Ошибка: {error}</div>}
 
-    {types.length > 0 && (
-    <>
-        <h3>Существующие типы</h3>
-        <DataTable data={types} columns={viewColumns} />
-    </>
-    )}
+        {types.length > 0 && (
+          <>
+            <h3>Существующие типы</h3>
+            <DataTable data={types} columns={columns} />
+          </>
+        )}
+        {types.length === 0 && !error && <p>Нет существующих типов накладных расходов</p>}
 
-    {types.length === 0 && !error && (
-    <p>Нет существующих типов накладных расходов</p>
-    )}
-
-    <h3 style={{ marginTop: 30 }}>Добавить новый тип</h3>
-    <DataTable data={[newRow]} columns={editColumns} />
-</WideWidget>
-);
+        <h3 style={{ marginTop: 30 }}>Добавить новый тип</h3>
+        <form onSubmit={handleAdd}>
+          <div className={styles.formGroup}>
+            <label>Название:</label>
+            <input
+              type="text"
+              className={styles.overheadInput}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label>Описание:</label>
+            <textarea
+              className={styles.overheadTextarea}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={5}
+            />
+          </div>
+          {formError && <div className={styles.error}>{formError}</div>}
+          <button type="submit" className={styles.centeredButton} disabled={saving}>
+            {saving ? 'Сохранение...' : 'Добавить'}
+          </button>
+        </form>
+      </div>
+    </WideWidget>
+  );
 };
 
 export default FI_OverheadTypes;

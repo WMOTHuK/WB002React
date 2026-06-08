@@ -54,6 +54,7 @@ function calcColumnWidth(accessorKey, header, data, colType, min = 80, max = 300
  * Uses defaultValue + onBlur to avoid losing focus during editing.
  */
 const TableCell = React.memo(({ col, value, rowData }) => {
+  const inputClass = styles[col.inputStyle] || styles.input;
   switch (col.type) {
     case 'checkbox':
       return (
@@ -80,13 +81,12 @@ const TableCell = React.memo(({ col, value, rowData }) => {
           {value}
         </span>
       );
-
     case 'number':
       if (col.editable) {
         return (
           <input
             type="number"
-            className={styles.input}
+            className={inputClass}
             defaultValue={value ?? ''}
             onBlur={(e) => col.onChange?.(Number(e.target.value), rowData)}
           />
@@ -99,13 +99,27 @@ const TableCell = React.memo(({ col, value, rowData }) => {
         return (
           <input
             type="date"
-            className={styles.input}
+            className={inputClass}
             defaultValue={value ? value.slice(0, 10) : ''}
             onBlur={(e) => col.onChange?.(e.target.value, rowData)}
           />
         );
       }
       return value ? new Date(value).toLocaleDateString('ru-RU') : '';
+
+    // Добавь тип 'textarea' для многострочного ввода
+    case 'textarea':
+      if (col.editable) {
+        return (
+          <textarea
+            className={inputClass}
+            defaultValue={value ?? ''}
+            rows={col.rows || 5}
+            onBlur={(e) => col.onChange?.(e.target.value, rowData)}
+          />
+        );
+      }
+      return value;
 
     case 'custom':
       return col.cellRender ? col.cellRender(value, rowData) : value;
@@ -116,13 +130,13 @@ const TableCell = React.memo(({ col, value, rowData }) => {
         return (
           <input
             type="text"
-            className={styles.input}
+            className={inputClass}
             defaultValue={value ?? ''}
             onBlur={(e) => col.onChange?.(e.target.value, rowData)}
           />
         );
       }
-      return value;
+      return <span className={col.cellStyle ? styles[col.cellStyle] : undefined}>{value}</span>;
   }
 });
 

@@ -99,3 +99,46 @@
   margin-left: 4px;
   font-size: 12px;
 }
+
+.inputShort {
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  max-width: 120px;
+}
+
+.inputMedium {
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  max-width: 200px;
+}
+
+.inputLong {
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  max-width: 400px;
+}
+
+.textarea {
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  min-height: 80px;
+  resize: vertical;
+  font-family: inherit;
+  width: 100%;
+}
+
+.bold {
+  font-weight: 600;
+}
