@@ -8,6 +8,7 @@ import styles from '../../styles/Menu.module.css';
 const subMenuItems = {
   FI: [
     { path: "/fi/reports", label: "Отчеты" },
+    { path: "/fi/overheads/groups", label: "Группы накладных" },
     { path: "/fi/overheads/types", label: "Типы накладных" },
     { path: "/fi/overheads/values", label: "Значения накладных" },
   ],
@@ -15,7 +16,6 @@ const subMenuItems = {
     { path: "/crm/campaign", label: "Рекламные компании" }
   ]
 };
-
 const MenuWrapper = () => {
   const { userData, logout } = useContext(UserContext);
   const navigate = useNavigate();

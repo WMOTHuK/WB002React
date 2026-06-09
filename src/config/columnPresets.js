@@ -10,7 +10,7 @@ export const columnTypes = {
   checkbox:  ['active', 'deleted'],
   number:    ['current_cost', 'price', 'discount', 'currentprice', 'dayprice', 'daydisc', 'nightprice', 'nightdisc', 'subjectid', 'imtid'],
   date:      ['pause_time', 'restart_time', 'change_date'],
-  text:      [ 'oh_name', 'oh_desc'],
+  text:      [ 'oh_name', 'oh_desc', 'oh_grp_name', 'oh_grp_desc'],
 };
 
 /**
@@ -60,7 +60,9 @@ export const columnOrder = [
 
 export const inputStyles = {
   oh_name:        'inputMedium',
-  oh_description: 'textarea',  // будет рендериться как <textarea>
+  oh_description: 'textarea', 
+  oh_grp_name:    'inputMedium',    
+  oh_grp_desc:    'textarea',       
   current_cost:   'inputShort',
   change_date:    'inputShort',
   title:          'inputLong',
@@ -69,4 +71,5 @@ export const inputStyles = {
 
 export const cellStyles = {
   oh_name: 'bold',
+  oh_grp_name: 'bold', 
 };
