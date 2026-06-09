@@ -6,7 +6,7 @@ import axios from 'axios';
 import styles from '../../styles/styles.module.css';
 import DataTable from '../../components/table/DataTable';
 import { UserContext } from '../../context/context';
-import { downloadGoodsData } from '../../services/api/goodsservice';
+import { downloadGoodsData } from '../../services/api/goodsService';
 import { useTableConfig } from '../../hooks/useTableConfig';
 import { useRowSave } from '../../hooks/useRowSave';
 

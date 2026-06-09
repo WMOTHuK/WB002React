@@ -4,7 +4,7 @@ import styles from '../../styles/styles.module.css';
 import '../../styles/App.css';
 import { getTableFromDB, getTableLocale, sendDataToBackend } from '../../services/api/tableService';
 import { fetchWBdata } from '../../services/api/wbservice';
-import { downloadGoodsData, enrichWithGoodsData } from '../../services/api/goodsservice';
+import { downloadGoodsData, enrichWithGoodsData } from '../../services/api/goodsService';
 import EditableTable from '../../components/table/EditableTable';
 import { UserContext } from '../../context/context';
 import { getTableKeys } from '../../utils/tableHelpers';

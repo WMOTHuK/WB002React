@@ -18,7 +18,8 @@ import Apikeysupload from './features/apikeys/apikeysupload';
 import FI_OverheadGroups from './pages/finance/FI_overheadGroups.jsx';
 import FI_OverheadTypes from './pages/finance/FI_OverheadTypes';
 import FI_OverheadValues from './pages/finance/FI_OverheadValues';
-
+import GoodsTypes from './pages/goods/GoodsTypes';
+import GoodsGroups from './pages/goods/GoodsGroups.jsx';
 
 const LoginRoute = () => {
   const { userData, authChecked } = useContext(UserContext);
@@ -40,6 +41,8 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/upload" element={<Upload />} />
             <Route path="/goods" element={<Goods />} />
+            <Route path="/goods/types" element={<GoodsTypes />} />
+            <Route path="/goods/groups" element={<GoodsGroups />} />
             <Route path="/fi/reports" element={<FI_reporting />} />
             <Route path="/fi/overheads/groups" element={<FI_OverheadGroups />} />
             <Route path="/fi/overheads/types" element={<FI_OverheadTypes />} />

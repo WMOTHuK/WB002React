@@ -10,8 +10,8 @@ export const columnTypes = {
   checkbox:  ['active', 'deleted'],
   number:    ['current_cost', 'price', 'discount', 'currentprice', 'dayprice', 'daydisc', 'nightprice', 'nightdisc', 'subjectid', 'imtid'],
   date:      ['pause_time', 'restart_time', 'change_date'],
-  select:    ['oh_grp_sel'],
-  text:      [ 'oh_name', 'oh_desc', 'oh_grp_name', 'oh_grp_desc'],
+  select:    ['oh_grp_sel', 'goods_type_sel'],
+  text:      [ 'oh_name', 'oh_desc', 'oh_grp_name', 'oh_grp_desc','goods_grp_name', 'goods_grp_desc','goods_type_name', 'goods_type_desc'],
 };
 
 /**
@@ -37,7 +37,8 @@ export const excludedFields = [
   'subjectid',
   'id',
   'ohcat_id',
-  'oh_grp_id'
+  'oh_grp_id',
+  'goods_type_id'
 ];
 
 /**
@@ -64,7 +65,11 @@ export const inputStyles = {
   oh_name:        'inputMedium',
   oh_description: 'textarea', 
   oh_grp_name:    'inputMedium',    
-  oh_grp_desc:    'textarea',       
+  oh_grp_desc:    'textarea',
+  goods_grp_name: 'inputMedium',
+  goods_grp_desc: 'textarea',  
+  goods_type_name: 'inputMedium',
+  goods_type_desc: 'textarea',           
   current_cost:   'inputShort',
   change_date:    'inputShort',
   title:          'inputLong',
@@ -74,4 +79,6 @@ export const inputStyles = {
 export const cellStyles = {
   oh_name: 'bold',
   oh_grp_name: 'bold', 
+  goods_grp_name: 'bold',
+  goods_type_name: 'bold',
 };

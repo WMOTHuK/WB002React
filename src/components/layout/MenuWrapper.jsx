@@ -9,23 +9,31 @@ const subMenuItems = {
   FI: [
     { path: "/fi/reports", label: "Отчеты" },
     { path: "/fi/overheads/groups", label: "Группы накладных" },
-    { path: "/fi/overheads/types", label: "Типы накладных" },
+    { path: "/fi/overheads/types", label: "Категории накладных" },
     { path: "/fi/overheads/values", label: "Значения накладных" },
   ],
   CRM: [
     { path: "/crm/campaign", label: "Рекламные компании" }
-  ]
+  ],
+  Goods: [
+    { path: "/goods", label: "Список товаров" },
+    { path: "/goods/types", label: "Типы товаров" },
+    { path: "/goods/groups", label: "Группы товаров" },
+  ],
 };
+
 const MenuWrapper = () => {
   const { userData, logout } = useContext(UserContext);
   const navigate = useNavigate();
-  const [subMenus, setSubMenus] = useState({ FI: false, CRM: false });
+  const [subMenus, setSubMenus] = useState({ FI: false, CRM: false, Goods: false });
   const subMenuRef = useRef(null);
 
   const toggleSubMenu = (menuId, event) => {
     event.preventDefault();
     setSubMenus(prev => ({
-      ...prev,
+      FI: false,
+      CRM: false,
+      Goods: false,
       [menuId]: !prev[menuId]
     }));
   };
@@ -40,7 +48,7 @@ const MenuWrapper = () => {
   useEffect(() => {
     function handleClickOutside(event) {
       if (subMenuRef.current && !subMenuRef.current.contains(event.target)) {
-        setSubMenus({ FI: false, CRM: false });
+        setSubMenus({ FI: false, CRM: false, Goods: false });
       }
     }
 
@@ -60,7 +68,14 @@ const MenuWrapper = () => {
           {userData?.userInfo?.token ? (
             <>
               <li><Link to="/upload">Загрузка</Link></li>
-              <li><Link to="/goods">Товары</Link></li>
+              <li className={styles.fakeli} onClick={(e) => toggleSubMenu('Goods', e)}>
+                Товары
+                <SubMenu
+                  items={subMenuItems.Goods}
+                  isVisible={subMenus.Goods}
+                  menuRef={subMenuRef}
+                />
+              </li>
               <li className={styles.fakeli} onClick={(e) => toggleSubMenu('FI', e)}>
                 Финансы
                 <SubMenu

@@ -169,16 +169,16 @@ const FI_OverheadTypes = () => {
     return null;
   };
 
-  if (loading) return <WideWidget title="Типы накладных расходов"><div>Загрузка...</div></WideWidget>;
+  if (loading) return <WideWidget title="Категории накладных расходов"><div>Загрузка...</div></WideWidget>;
 
   return (
-    <WideWidget title="Типы накладных расходов">
+    <WideWidget title="Категории накладных расходов">
     <div className={styles.contentCentered}>
       {error && <div className={styles.error}>Ошибка: {error}</div>}
 
       {sortedTypes.length > 0 && (
         <>
-          <h3>Существующие типы</h3>
+          <h3>Существующие категории</h3>
           <DataTable
             data={sortedTypes}
             columns={columns}
@@ -187,10 +187,10 @@ const FI_OverheadTypes = () => {
         </>
       )}
       {sortedTypes.length === 0 && !error && (
-        <p>Нет существующих типов накладных расходов</p>
+        <p>Нет существующих категорий накладных расходов</p>
       )}
 
-      <h3 style={{ marginTop: 30 }}>Добавить новый тип</h3>
+      <h3 style={{ marginTop: 30 }}>Добавить новую Категорию</h3>
       <form onSubmit={handleAdd}>
         <div className={styles.formGroup}>
           <label>Название:</label>

@@ -1,4 +1,7 @@
+import axios from 'axios';
 import { getTableFromDB } from './tableService'
+
+const CONTENT_API = '/api/content';
 
 export const downloadGoodsData = async (userContext, setStatus) => {
   try {
@@ -73,4 +76,54 @@ export async function enrichWithGoodsData(finalData) {
         }
         return item;
     });
+}
+
+
+export async function fetchGoodsTypes(locale, token) {
+  const response = await axios.get(`${CONTENT_API}/getgoodstypes`, {
+    params: { locale },
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}
+
+export async function addGoodsType({ name, description, locale }, token) {
+  const response = await axios.post(`${CONTENT_API}/addgoodstype`, {
+    name,
+    description,
+    locale
+  }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}
+
+export async function fetchGoodsGroups(locale, token) {
+  const response = await axios.get(`${CONTENT_API}/getgoodsgroups`, {
+    params: { locale },
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}
+
+export async function addGoodsGroup({ name, description, goods_type_id, locale }, token) {
+  const response = await axios.post(`${CONTENT_API}/addgoodsgroup`, {
+    name,
+    description,
+    goods_type_id,
+    locale
+  }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}
+
+export async function changeGoodsGroupType({ id, goods_type_id }, token) {
+  const response = await axios.post(`${CONTENT_API}/changegoodsgrouptype`, {
+    id,
+    goods_type_id
+  }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
 }
