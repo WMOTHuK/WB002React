@@ -1,9 +1,7 @@
+// src/utils/buildTableConfig.js
+
 import { columnTypes, editableFields, excludedFields, linkUrls, columnOrder, inputStyles, cellStyles } from '../config/columnPresets';
 
-/**
- * Resolve the type of a field by its accessorKey.
- * Defaults to 'text' if not found in columnTypes.
- */
 function getFieldType(key) {
   for (const [type, fields] of Object.entries(columnTypes)) {
     if (fields.includes(key)) return type;
@@ -11,33 +9,18 @@ function getFieldType(key) {
   return 'text';
 }
 
-/**
- * Sort keys: priority fields first (in columnOrder order),
- * then the rest in natural order.
- */
 function sortKeys(keys) {
   return [...keys].sort((a, b) => {
     const indexA = columnOrder.indexOf(a);
     const indexB = columnOrder.indexOf(b);
-
-    if (indexA !== -1 && indexB !== -1) return indexA - indexB;   // both in list → follow list order
-    if (indexA !== -1) return -1;                                   // only a in list → a first
-    if (indexB !== -1) return 1;                                    // only b in list → b first
-    return 0;                                                        // neither → keep natural order
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+    return 0;
   });
 }
 
-/**
- * Build a columns array for DataTable.
- *
- * @param {string[]}   keys         – field names extracted from data
- * @param {object[]}   translations – [{ colname, value }] for header labels
- * @param {string}     mode         – 'view' or 'edit'
- * @param {function}   navigate     – react-router navigate (for link columns)
- * @param {function}   onChange     – callback(field, value, row) for editable cells
- * @returns {object[]} columns compatible with DataTable
- */
-export function buildTableConfig({ keys, translations = [], mode = 'view', navigate, onChange }) {
+export function buildTableConfig({ keys, translations = [], mode = 'view', navigate, onChange, columnOverrides = {} }) {
   const translationMap = {};
   if (Array.isArray(translations)) {
     translations.forEach(t => {
@@ -54,23 +37,37 @@ export function buildTableConfig({ keys, translations = [], mode = 'view', navig
         type,
       };
 
-
-      if (cellStyles[key]) {
-        column.cellStyle = cellStyles[key];
+      // Применяем переопределения из columnOverrides
+      if (columnOverrides[key]) {
+        const overrides = { ...columnOverrides[key] };
+        delete overrides.header;  // не перезаписываем header из переводов
+        Object.assign(column, overrides);
       }
-      
-      // Make editable in 'edit' mode
+      // Select type
+      if (column.type === 'select') {
+        column.options = column.options || [];
+        column.placeholder = column.placeholder || 'Выберите...';
+        column.editable = true;
+      }
+
+      // Editable fields
       if (mode === 'edit' && editableFields.includes(key)) {
         column.editable = true;
-        column.inputStyle = inputStyles[key] || 'input'; // подхватываем стиль
-        column.type = inputStyles[key] === 'textarea' ? 'textarea' : column.type;
-        column.onChange = (value, row) => {
-          if (onChange) onChange(key, value, row);
-        };
+        if (inputStyles[key]) {
+          column.inputStyle = inputStyles[key];
+          if (inputStyles[key] === 'textarea') {
+            column.type = 'textarea';
+          }
+        }
+        if (!column.onChange) {
+          column.onChange = (value, row) => {
+            if (onChange) onChange(key, value, row);
+          };
+        }
       }
 
-      // Link columns – navigate or open external URL
-      if (type === 'link') {
+      // Link columns
+      if (column.type === 'link') {
         const urlBuilder = linkUrls[key];
         column.onLinkClick = (row) => {
           if (!urlBuilder) return;
@@ -81,6 +78,11 @@ export function buildTableConfig({ keys, translations = [], mode = 'view', navig
             navigate(url);
           }
         };
+      }
+
+      // Cell styles
+      if (cellStyles && cellStyles[key]) {
+        column.cellStyle = cellStyles[key];
       }
 
       return column;

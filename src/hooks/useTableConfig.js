@@ -18,7 +18,7 @@ import { buildTableConfig } from '../utils/buildTableConfig';
  *   buildConfig: (data, onDataChange?) => Promise<void>
  * }}
  */
-export function useTableConfig(navigate, locale = 'RU', mode = 'view', token) {
+export function useTableConfig(navigate, locale = 'RU', mode = 'view', token, columnOverrides = {}) {
   const [columns, setColumns] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -41,6 +41,7 @@ export function useTableConfig(navigate, locale = 'RU', mode = 'view', token) {
         mode,
         navigate,
         onChange,
+        columnOverrides,  
       });
 
       setColumns(cols);

@@ -65,7 +65,25 @@ const TableCell = React.memo(({ col, value, rowData }) => {
           onChange={(e) => col.onChange?.(e.target.checked, rowData)}
         />
       );
-
+      case 'select':
+        if (col.editable) {
+          return (
+            <select
+              className={styles.input}
+              value={value ?? ''}
+              onChange={(e) => col.onChange?.(e.target.value, rowData)}
+            >
+              <option value="">{col.placeholder || 'Выберите...'}</option>
+              {col.options?.map(opt => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          );
+        }
+        const option = col.options?.find(o => o.value === value);
+        return option?.label || value || '';
     case 'image':
       return value ? <img src={value} alt="" className={styles.img} /> : null;
 
@@ -145,6 +163,7 @@ export default function DataTable({
   columns = [],
   onRowClick = null,
   enableSorting = true,
+  renderRowBefore = null,
 }) {
   const [sorting, setSorting] = useState([]);
 
@@ -176,42 +195,45 @@ export default function DataTable({
     getSortedRowModel: enableSorting ? getSortedRowModel() : undefined,
   });
 
-  return (
-    <div className={styles.wrapper}>
-      <table className={styles.table}>
-        <thead>
-          {table.getHeaderGroups().map(headerGroup => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map(header => (
-                <th
-                  key={header.id}
-                  className={styles.th}
-                  style={{ width: header.column.columnDef.size }}
-                  onClick={header.column.getToggleSortingHandler()}
-                >
-                  {flexRender(header.column.columnDef.header, header.getContext())}
-                  {header.column.getIsSorted() && (
-                    <span className={styles.sortIcon}>
-                      {header.column.getIsSorted() === 'asc' ? ' 🔼' : ' 🔽'}
-                    </span>
-                  )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map(row => (
-            <tr key={row.id} className={styles.row}>
+return (
+  <div className={styles.wrapper}>
+    <table className={styles.table}>
+      <thead>
+        {table.getHeaderGroups().map(headerGroup => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map(header => (
+              <th
+                key={header.id}
+                className={styles.th}
+                style={{ width: header.column.columnDef.size }}
+                onClick={header.column.getToggleSortingHandler()}
+              >
+                {flexRender(header.column.columnDef.header, header.getContext())}
+                {header.column.getIsSorted() && (
+                  <span className={styles.sortIcon}>
+                    {header.column.getIsSorted() === 'asc' ? ' 🔼' : ' 🔽'}
+                  </span>
+                )}
+              </th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      <tbody>
+        {table.getRowModel().rows.map((row, index) => (
+          <React.Fragment key={row.id}>
+            {renderRowBefore?.(row.original, index, data)}
+            <tr className={styles.row}>
               {row.getVisibleCells().map(cell => (
                 <td key={cell.id} className={styles.td}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+          </React.Fragment>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
 }

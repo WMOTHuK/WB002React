@@ -11,11 +11,12 @@ export async function fetchOverheadTypes(locale, token) {
   return response.data;
 }
 
-export async function addOverheadType({ name, description, locale }, token) {
+export async function addOverheadType({ name, description, oh_grp_id, locale,  }, token) {
   const response = await axios.post(`${API}/addohtype`, {
     name,
     description,
-    locale
+    locale,
+    oh_grp_id
   }, {
     headers: { Authorization: `Bearer ${token}` }
   });
@@ -35,6 +36,16 @@ export async function addOverheadGroup({ name, description, locale }, token) {
     name,
     description,
     locale
+  }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}
+
+export async function changeOverheadTypeGroup({ id, oh_grp_id }, token) {
+  const response = await axios.post(`${API}/changeohtypegroup`, {
+    id,
+    oh_grp_id
   }, {
     headers: { Authorization: `Bearer ${token}` }
   });
