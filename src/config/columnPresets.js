@@ -10,7 +10,7 @@ export const columnTypes = {
   checkbox:  ['active', 'deleted'],
   number:    ['current_cost', 'price', 'discount', 'currentprice', 'dayprice', 'daydisc', 'nightprice', 'nightdisc', 'subjectid', 'imtid'],
   date:      ['pause_time', 'restart_time', 'change_date'],
-  select:    ['oh_grp_sel', 'goods_type_sel'],
+  select:    ['oh_grp_sel', 'goods_type_sel', 'goods_grp_sel'],
   text:      [ 'oh_name', 'oh_desc', 'oh_grp_name', 'oh_grp_desc','goods_grp_name', 'goods_grp_desc','goods_type_name', 'goods_type_desc'],
 };
 
@@ -38,7 +38,8 @@ export const excludedFields = [
   'id',
   'ohcat_id',
   'oh_grp_id',
-  'goods_type_id'
+  'goods_type_id',
+  'goods_grp_id'
 ];
 
 /**

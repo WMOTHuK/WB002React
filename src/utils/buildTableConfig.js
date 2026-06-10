@@ -20,7 +20,7 @@ function sortKeys(keys) {
   });
 }
 
-export function buildTableConfig({ keys, translations = [], mode = 'view', navigate, onChange, columnOverrides = {} }) {
+export function buildTableConfig({ keys, translations = [], mode = 'view', navigate, onChange, columnOverrides = {}, excludeFields = [] }) {
   const translationMap = {};
   if (Array.isArray(translations)) {
     translations.forEach(t => {
@@ -28,7 +28,7 @@ export function buildTableConfig({ keys, translations = [], mode = 'view', navig
     });
   }
 
-  return sortKeys(keys.filter(key => !excludedFields.includes(key)))
+  return sortKeys(keys.filter(key => !excludedFields.includes(key) && !excludeFields.includes(key)))
     .map(key => {
       const type = getFieldType(key);
       const column = {
@@ -48,6 +48,10 @@ export function buildTableConfig({ keys, translations = [], mode = 'view', navig
         column.options = column.options || [];
         column.placeholder = column.placeholder || 'Выберите...';
         column.editable = true;
+        // Берём onChange из columnOverrides, иначе из общего
+        column.onChange = columnOverrides[key]?.onChange || ((value, row) => {
+          if (onChange) onChange(key, value, row);
+        });
       }
 
       // Editable fields

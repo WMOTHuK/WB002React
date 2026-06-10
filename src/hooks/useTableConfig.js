@@ -23,7 +23,7 @@ export function useTableConfig(navigate, locale = 'RU', mode = 'view', token, co
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const buildConfig = useCallback(async (data, onDataChange) => {
+  const buildConfig = useCallback(async (data, onDataChange, columnOverrides = {}, excludeFields = []) => {
     setLoading(true);
     setError(null);
 
@@ -41,7 +41,8 @@ export function useTableConfig(navigate, locale = 'RU', mode = 'view', token, co
         mode,
         navigate,
         onChange,
-        columnOverrides,  
+        columnOverrides,
+        excludeFields,
       });
 
       setColumns(cols);
@@ -50,7 +51,7 @@ export function useTableConfig(navigate, locale = 'RU', mode = 'view', token, co
     } finally {
       setLoading(false);
     }
-  }, [navigate, locale, mode]);
+  }, [navigate, locale, mode, token]);
 
   return { columns, loading, error, buildConfig };
 }

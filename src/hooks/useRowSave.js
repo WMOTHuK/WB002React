@@ -29,19 +29,25 @@ export function useRowSave({ saveFn, getRowId }) {
     });
   }, [getRowId]);
 
-  const saveRow = useCallback(async (row) => {
-    const id = getRowId(row);
-    setSavingRows(prev => new Set(prev).add(id));
+  const saveRow = useCallback(async (row, originalRow) => {
+  const id = getRowId(row);
+  setSavingRows(prev => new Set(prev).add(id));
 
-    try {
-      await saveFn(row);
+  try {
+      const result = await saveFn(row, originalRow);
 
-      setChangedRows(prev => {
-        const next = new Set(prev);
-        next.delete(id);
-        return next;
-      });
-      setSavedRows(prev => new Set(prev).add(id));
+      if (result.success) {
+        setChangedRows(prev => {
+          const next = new Set(prev);
+          next.delete(id);
+          return next;
+        });
+        setSavedRows(prev => new Set(prev).add(id));
+      } else {
+        // Показываем ошибку, кнопка остаётся
+        console.error('Save error:', result.error);
+        alert(result.error); // или свой UI для ошибок
+      }
     } catch (err) {
       console.error('Save error:', err);
     } finally {
@@ -52,7 +58,6 @@ export function useRowSave({ saveFn, getRowId }) {
       });
     }
   }, [saveFn, getRowId]);
-
   const actionsColumn = {
     accessorKey: '_actions',
     header: '',

@@ -38,46 +38,6 @@ export const downloadGoodsData = async (userContext, setStatus) => {
   
 };
 
-export async function enrichWithGoodsData(finalData) {
-    const allDataFromDB = await getTableFromDB('goods');
-    const photoDataFromDB = await getTableFromDB('photos');
-
-    const photoDataMap = photoDataFromDB.reduce((acc, item) => {
-        acc[item.nmid] = item.big;
-        return acc;
-    }, {});
-
-    const allDataMap = allDataFromDB.reduce((acc, item) => {
-        acc[item.nmid] = item;
-        return acc;
-    }, {});
-
-    return finalData.map(item => {
-        const { nmid } = item;
-        const photo = photoDataMap[nmid];
-        const additionalData = allDataMap[nmid];
-
-        if (additionalData && photo) {
-            return {
-                big: photo,
-                nmid: nmid,
-                vendorcode: additionalData.vendorcode,
-                title: additionalData.title,
-                price: item.price,
-                discount: item.discount,
-                promocode: item.promocode,
-                currentprice: item.currentprice,
-                dayprice: item.dayprice,
-                daydisc: item.daydisc,
-                nightprice: item.nightprice,
-                nightdisc: item.nightdisc,
-                active: item.active
-            };
-        }
-        return item;
-    });
-}
-
 
 export async function fetchGoodsTypes(locale, token) {
   const response = await axios.get(`${CONTENT_API}/getgoodstypes`, {
@@ -126,4 +86,95 @@ export async function changeGoodsGroupType({ id, goods_type_id }, token) {
     headers: { Authorization: `Bearer ${token}` }
   });
   return response.data;
+}
+
+/**
+ * Update cost and date for a good.
+ */
+export async function updateCostPrice({ vendorcode, new_cost, start_date }, token) {
+  const response = await axios.post('/api/content/update_cost_price', {
+    vendorcode,
+    new_cost,
+    start_date,
+  }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}
+
+/**
+ * Change group for a good.
+ */
+export async function changeGoodsGroup({ vendorcode, goods_grp_id }, token) {
+  const response = await axios.post('/api/content/changegoodsgroup', {
+    vendorcode,
+    goods_grp_id,
+  }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}
+
+/**
+ * Save a good row — detects changed fields and calls appropriate API.
+ * Returns { success, error? }.
+ */
+export async function saveGoodsRow(row, originalRow, token) {
+  // Сравниваем только редактируемые поля
+  const editableKeys = ['current_cost', 'change_date', 'goods_grp_sel', 'title', 'vendorcode', 'brand'];
+  
+  const changedFields = [];
+  for (const key of editableKeys) {
+    const newVal = row[key];
+    const oldVal = originalRow?.[key];
+    
+    // Приводим к строке для надёжного сравнения
+    if (String(newVal ?? '') !== String(oldVal ?? '')) {
+      changedFields.push(key);
+    }
+  }
+
+  if (changedFields.length === 0) return { success: true };
+
+  // Правила сохранения
+  const saveRules = [
+    {
+      fields: ['current_cost', 'change_date'],
+      fn: () => updateCostPrice({
+        vendorcode: row.vendorcode,
+        new_cost: row.current_cost,
+        start_date: row.change_date,
+      }, token),
+    },
+    {
+      fields: ['goods_grp_sel'],
+      fn: () => changeGoodsGroup({
+        vendorcode: row.vendorcode,
+        goods_grp_id: row.goods_grp_sel || null,
+      }, token),
+    },
+  ];
+
+  // Ищем точное совпадение
+  const matchedRule = saveRules.find(rule =>
+    rule.fields.length === changedFields.length &&
+    rule.fields.every(f => changedFields.includes(f))
+  );
+
+  if (!matchedRule) {
+    return {
+      success: false,
+      error: `Нет функции обновления для полей: ${changedFields.join(', ')}`,
+    };
+  }
+
+  try {
+    await matchedRule.fn();
+    return { success: true };
+  } catch (err) {
+    return {
+      success: false,
+      error: err.response?.data?.error || err.message,
+    };
+  }
 }
