@@ -142,3 +142,23 @@
 .bold {
   font-weight: 600;
 }
+
+/* Ячейки платформ */
+.wbCell {
+  background: #fdf0ff; /* светло-фиолетовый */
+}
+
+.ozonCell {
+  background: #eaf4fc; /* светло-голубой */
+}
+
+/* Граница между месяцами */
+.monthDivider {
+  border-left: 2px solid #bbb;
+}
+
+/* Центрирование заголовков платформ */
+.platformHeader {
+  text-align: center;
+  font-weight: 600;
+}

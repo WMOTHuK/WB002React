@@ -51,3 +51,11 @@ export async function changeOverheadTypeGroup({ id, oh_grp_id }, token) {
   });
   return response.data;
 }
+
+export async function fetchMonthlyOH({ user_id, date }, token) {
+  const response = await axios.get(`${API}/getmonthlyoh`, {
+    params: { user_id, date },
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}
