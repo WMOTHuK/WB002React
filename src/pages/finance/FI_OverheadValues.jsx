@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext, useMemo, useCallback } from 're
 import WideWidget from '../../components/ui/widewidget/WideWidget';
 import { UserContext } from '../../context/context';
 import { fetchMonthlyOH } from '../../services/api/financeService';
-import { fetchOverheadGroups } from '../../services/api/financeService';
+import { fetchOverheadGroups, saveMonthlyOH } from '../../services/api/financeService';
 import styles from '../../styles/styles.module.css';
 import tableStyles from '../../styles/DataTable.module.css';
 
@@ -17,7 +17,9 @@ const FI_OverheadValues = () => {
 
   const [centerDate, setCenterDate] = useState(() => {
     const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    return `${y}-${m}-01`;
   });
 
   const [rawData, setRawData] = useState([]);
@@ -25,6 +27,9 @@ const FI_OverheadValues = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [groups, setGroups] = useState([]);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(null);
+  const [savedCount, setSavedCount] = useState(0);
 
   // Загружаем группы один раз
   useEffect(() => {
@@ -37,7 +42,7 @@ const FI_OverheadValues = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchMonthlyOH({ user_id: userId, date }, token);
+      const data = await fetchMonthlyOH(date, token);
       setRawData(data);
       setEditedValues({});
     } catch (err) {
@@ -59,6 +64,9 @@ const FI_OverheadValues = () => {
       d.setMonth(d.getMonth() + i);
       m.push(d);
     }
+    // Используем m, а не months (который ещё не объявлен)
+    console.log('months:', m.map(d => ({ iso: d.toISOString(), key: d.toISOString().slice(0, 7) })));
+    console.log('months[3] key:', m[3]?.toISOString().slice(0, 7));
     return m;
   }, [centerDate]);
 
@@ -66,10 +74,10 @@ const FI_OverheadValues = () => {
     const p = {};
     rawData.forEach(r => {
       const cat = r.ohcat_id;
-      const mk = r.oh_month?.slice(0, 7);
+      const mk = r.oh_month?.slice(0, 10)?.slice(0, 7);
       if (!p[cat]) p[cat] = {};
       if (!p[cat][mk]) p[cat][mk] = {};
-      p[cat][mk][r.platform] = r.oh_amount;
+      p[cat][mk][r.platform.toUpperCase()] = r.oh_amount;  // ← toUpperCase
     });
     return p;
   }, [rawData]);
@@ -201,6 +209,35 @@ const FI_OverheadValues = () => {
     return null;
   }, [columns.length]);
 
+
+  const handleSave = async () => {
+    const editKeys = Object.keys(editedValues);
+    if (editKeys.length === 0) return;
+
+    const updates = editKeys.map(key => {
+      const [ohcat_id, yearMonth, platform] = key.split('_');
+      return {
+        ohcat_id: Number(ohcat_id),
+        oh_month: `${yearMonth}-01`,
+        platform,
+        oh_amount: editedValues[key],
+      };
+    });
+
+    setSaving(true);
+    setSaveError(null);
+
+    try {
+      await saveMonthlyOH(updates, token);
+      setSavedCount(updates.length);
+      setEditedValues({});
+      await loadData(centerDate); // ← перезагружаем после успешного сохранения
+    } catch (err) {
+      setSaveError(err.response?.data?.error || err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
   if (loading) return (
     <WideWidget title="Значения накладных расходов">
       <div className={styles.contentCentered}>Загрузка...</div>
@@ -211,14 +248,18 @@ const FI_OverheadValues = () => {
     <WideWidget title="Значения накладных расходов">
       <div className={styles.contentCentered}>
         {error && <div className={styles.error}>Ошибка: {error}</div>}
-
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
           <button onClick={() => changeMonth(-1)} className={styles.centeredButton}>← Раньше</button>
           <span style={{ fontWeight: 'bold' }}>
             {months[0]?.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })} — {months[months.length - 1]?.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })}
           </span>
           <button onClick={() => changeMonth(1)} className={styles.centeredButton}>Позже →</button>
+          <button onClick={handleSave} className={styles.centeredButton} disabled={saving || Object.keys(editedValues).length === 0}>
+            {saving ? 'Сохранение...' : `Сохранить (${Object.keys(editedValues).length})`}
+          </button>
         </div>
+        {saveError && <div className={styles.error}>{saveError}</div>}
+        {savedCount > 0 && <div className={styles.success}>Сохранено {savedCount} записей</div>}
 
         <div className={tableStyles.wrapper}>
           <table className={tableStyles.table}>
