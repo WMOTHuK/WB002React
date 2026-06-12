@@ -1,8 +1,7 @@
 // src/features/auth/useRegister.js
 
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../context/context';
 import { registerUser, loginUser } from './authService';
 
 export function useRegister() {

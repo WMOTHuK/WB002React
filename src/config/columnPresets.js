@@ -12,6 +12,7 @@ export const columnTypes = {
   date:      ['pause_time', 'restart_time', 'change_date'],
   select:    ['oh_grp_sel', 'goods_type_sel', 'goods_grp_sel'],
   text:      [ 'oh_name', 'oh_desc', 'oh_grp_name', 'oh_grp_desc','goods_grp_name', 'goods_grp_desc','goods_type_name', 'goods_type_desc'],
+  button:    ['_groups', '_cards'],
 };
 
 /**
@@ -39,7 +40,10 @@ export const excludedFields = [
   'ohcat_id',
   'oh_grp_id',
   'goods_type_id',
-  'goods_grp_id'
+  'goods_grp_id',
+  'user_id',
+  'crmtype',
+  'crmstatus'
 ];
 
 /**
@@ -48,8 +52,8 @@ export const excludedFields = [
  */
 export const linkUrls = {
   nmid: (row) => `https://www.wildberries.ru/catalog/${row.nmid}/detail.aspx?targetUrl=GP`,
-  ozid: (row) => `https://www.ozon.ru/product/${row.ozid}`
-  //advertid: (row) => `/adverts/${row.advertid}`,
+  ozid: (row) => `https://www.ozon.ru/product/${row.ozid}`,
+  advertid: (row) => `https://cmp.wildberries.ru/campaigns/edit/36280250?advertID=${row.advertid}`,
   // user_id:  (row) => `/users/${row.user_id}`,
 };
 
@@ -82,4 +86,20 @@ export const cellStyles = {
   oh_grp_name: 'bold', 
   goods_grp_name: 'bold',
   goods_type_name: 'bold',
+};
+
+/**
+ * Button columns configuration.
+ * key: accessorKey
+ * value: { label, onClick? }
+ */
+export const buttonColumns = {
+  _groups: {
+    label: '+ Группа',
+    style: 'primary', // можно css-класс
+  },
+  _cards: {
+    label: '+ Карточки',
+    style: 'primary',
+  },
 };

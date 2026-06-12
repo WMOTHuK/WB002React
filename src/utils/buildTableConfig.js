@@ -1,6 +1,8 @@
 // src/utils/buildTableConfig.js
 
-import { columnTypes, editableFields, excludedFields, linkUrls, columnOrder, inputStyles, cellStyles } from '../config/columnPresets';
+import React from 'react';
+import { columnTypes, editableFields, excludedFields, linkUrls, 
+         columnOrder, inputStyles, cellStyles, buttonColumns  } from '../config/columnPresets';
 
 function getFieldType(key) {
   for (const [type, fields] of Object.entries(columnTypes)) {
@@ -88,7 +90,18 @@ export function buildTableConfig({ keys, translations = [], mode = 'view', navig
       if (cellStyles && cellStyles[key]) {
         column.cellStyle = cellStyles[key];
       }
-
+      
+      //Button coloumns
+      if (type === 'button' && buttonColumns[key]) {
+        const btn = buttonColumns[key];
+        column.type = 'custom';
+        column.sortable = false;
+        column.cellRender = () => (
+          <button className={`${btn.style || 'primary'}`} style={{ padding: '2px 8px', fontSize: 13 }}>
+            {btn.label}
+          </button>
+        );
+      }
       return column;
     });
 }

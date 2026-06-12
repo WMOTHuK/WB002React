@@ -12,7 +12,6 @@ const MONTHS_TO_SHOW = 4;
 const FI_OverheadValues = () => {
   const userdata = useContext(UserContext);
   const token = userdata.userData?.userInfo?.token;
-  const userId = userdata.userData?.userInfo?.userId;
   const locale = userdata.userData?.locale || 'RU';
 
   const [centerDate, setCenterDate] = useState(() => {

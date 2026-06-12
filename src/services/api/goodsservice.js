@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { getTableFromDB } from './tableService'
 
 const CONTENT_API = '/api/content';
 

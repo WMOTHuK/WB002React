@@ -1,28 +1,18 @@
-//dataUploadFunctions.js
+// src/services/api/advertService.js
+import axios from 'axios';
 
+const CRM_API = '/api/CRM';
 
-export const getCompaigns = async (userContext, setStatus) => {
-  try {
-    setStatus(prevStatus => [...prevStatus, `Запуск процедуры по кампаниям`]);
-    
-    const response = await fetch('/api/CRM/getcompaigns', {
-      headers: {
-        'Authorization': `Bearer ${userContext.userData.userInfo.token}`
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const campaigns = await response.json();
-    setStatus(prevStatus => [...prevStatus, `Данные компаний получены успешно`]);
-    return campaigns;
-    
-  } catch (error) {
-    setStatus(prevStatus => [...prevStatus, 
-      `Ошибка при загрузке данных(getCompaigns): ${error.response?.data?.detail || error.message}`
-    ]);
-    throw error;
-  }
-};
+export async function updateCRMFromWB(token) {
+  const response = await axios.get(`${CRM_API}/updatecrmfromwb`,{
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}
+
+export async function fetchActiveCompaigns(token) {
+  const response = await axios.get(`${CRM_API}/getactivecompaigns`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}
