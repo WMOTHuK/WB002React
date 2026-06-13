@@ -7,7 +7,7 @@
 export const columnTypes = {
   link:      ['nmid', 'advertid', 'ozid'],
   image:     ['card_photo'],
-  checkbox:  ['active', 'deleted', 'has_link'],
+  checkbox:  ['active', 'deleted', 'has_link', '_linked'],
   number:    ['current_cost', 'price', 'discount', 'currentprice', 'dayprice', 'daydisc', 'nightprice', 'nightdisc', 'subjectid', 'imtid'],
   date:      ['pause_time', 'restart_time', 'change_date'],
   select:    ['oh_grp_sel', 'goods_type_sel', 'goods_grp_sel'],
@@ -27,7 +27,8 @@ export const editableFields = [
   'active',
   'deleted',
   'change_date',
-  'has_link'
+  'has_link',
+  '_linked'
 ];
 
 /**
@@ -44,7 +45,7 @@ export const excludedFields = [
   'goods_grp_id',
   'user_id',
   'crmtype',
-  'crmstatus'
+  'crmstatus',
 ];
 
 /**

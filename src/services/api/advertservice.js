@@ -42,3 +42,20 @@ export async function fetchCampaignCards(campaignId, token) {
   });
   return response.data;
 }
+
+export async function fetchGoodsGroupsWithTypes(token) {
+  const response = await axios.get(`${CRM_API}/getgoodsgroupswithtypes`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}
+
+export async function linkGroupToCampaign(advertid, goods_grp_id, token) {
+  const response = await axios.post(`${CRM_API}/linkgrouptocampaign`, {
+    advertid,
+    goods_grp_id,
+  }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}

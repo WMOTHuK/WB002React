@@ -5,7 +5,8 @@ import DataTable from '../../components/table/DataTable';
 import Modal from '../../components/ui/Modal';
 import { UserContext } from '../../context/context';
 import { fetchActiveCompaigns, updateCRMFromWB, fetchCardsForCampaign, 
-        syncCampaignSubCards, fetchCampaignCards } from '../../services/api/advertService';
+        syncCampaignSubCards, fetchCampaignCards, fetchGoodsGroupsWithTypes,
+        linkGroupToCampaign  } from '../../services/api/advertService';
 import { fetchGoodsGroups } from '../../services/api/goodsService';
 import { getTableKeys } from '../../utils/tableHelpers';
 import { getTableLocale } from '../../services/api/tableService';
@@ -35,6 +36,13 @@ const CRM_Campaigns = () => {
   const [cardsData, setCardsData] = useState([]);
   const [cardsColumns, setCardsColumns] = useState([]);
   const [cardsLoading, setCardsLoading] = useState(false);
+
+  // Modal with groups
+  const [groupModalOpen, setGroupModalOpen] = useState(false);
+  const [groupModalTitle, setGroupModalTitle] = useState('');
+  const [groupsData, setGroupsData] = useState([]);
+  const [groupsColumns, setGroupsColumns] = useState([]);
+  const [groupsLoading, setGroupsLoading] = useState(false);
 
   const handleShowCards = async (row, source) => {
     campaignIdRef.current = row.advertid;
@@ -70,6 +78,79 @@ const CRM_Campaigns = () => {
       console.error('Ошибка загрузки карточек:', err);
     } finally {
       setCardsLoading(false);
+    }
+  };
+
+
+  const handleShowGroups = async (row) => {
+    campaignIdRef.current = row.advertid;
+    setGroupModalTitle(`Привязка группы к кампании: ${row.campaign_name || row.advertid}`);
+    setGroupModalOpen(true);
+    setGroupsLoading(true);
+
+    try {
+      const groups = await fetchGoodsGroupsWithTypes(token);
+      const enriched = groups.map(g => ({
+        ...g,
+        _linked: false, 
+      }));
+
+      // Сортируем по типу → группе
+      const sorted = sortGroupedData(enriched, [
+        { key: 'goods_type_name', type: 'string' },
+        { key: 'goods_grp_name', type: 'string' },
+      ]);
+      setGroupsData(sorted);
+
+      if (sorted.length > 0) {
+        const keys = getTableKeys(sorted);
+        const translations = await getTableLocale(keys, locale, token);
+
+        const cols = buildTableConfig({
+          keys: getTableKeys(sorted),  // ← уже содержит _linked
+          translations,
+          mode: 'edit',
+          onChange: (field, value, row) => {
+            if (field === '_linked') {
+              handleGroupToggle(value, row);
+            }
+          },
+        });
+
+        setGroupsColumns(cols);
+      }
+    } catch (err) {
+      console.error('Ошибка загрузки групп:', err);
+    } finally {
+      setGroupsLoading(false);
+    }
+  };
+
+  const handleGroupToggle = async (checked, groupRow) => {
+    if (!checked) return; // Снятие чекбокса не делаем
+
+    const advertid = campaignIdRef.current;
+    const goods_grp_id = groupRow.goods_grp_id;
+
+    // 1. Оптимистично обновляем UI — ставим галочку
+    setGroupsData(prev =>
+      prev.map(item =>
+        item.goods_grp_id === goods_grp_id ? { ...item, _linked: true } : item
+      )
+    );
+
+    // 2. Отправляем на сервер
+    try {
+      await linkGroupToCampaign(advertid, goods_grp_id, token);
+      // Успех — галочка остаётся
+    } catch (err) {
+      // 3. Откат
+      setGroupsData(prev =>
+        prev.map(item =>
+          item.goods_grp_id === goods_grp_id ? { ...item, _linked: false } : item
+        )
+      );
+      console.error('Ошибка привязки группы:', err);
     }
   };
 
@@ -110,6 +191,23 @@ const CRM_Campaigns = () => {
               }}
             >
               {buttonColumns._cards.label}
+            </button>
+          ),
+        };
+      }
+      if (col.accessorKey === '_groups') {
+        return {
+          ...col,
+          cellRender: (_, row) => (
+            <button
+              className={styles.centeredButton}
+              style={{ padding: '2px 8px', fontSize: 13 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleShowGroups(row);
+              }}
+            >
+              {buttonColumns._groups.label}
             </button>
           ),
         };
@@ -196,6 +294,25 @@ const CRM_Campaigns = () => {
             />
           ) : (
             <p>Нет карточек для этой кампании</p>
+          )}
+        </Modal>
+      )}
+
+      {groupModalOpen && (
+        <Modal title={groupModalTitle} onClose={() => setGroupModalOpen(false)}>
+          {groupsLoading ? (
+            <div>Загрузка...</div>
+          ) : groupsData.length > 0 ? (
+            <DataTable
+              data={groupsData}
+              columns={groupsColumns}
+              renderRowBefore={createGroupSeparator(
+                [{ key: 'goods_type_name', label: 'Тип' }],
+                groupsColumns.length
+              )}
+            />
+          ) : (
+            <p>Нет доступных групп</p>
           )}
         </Modal>
       )}
