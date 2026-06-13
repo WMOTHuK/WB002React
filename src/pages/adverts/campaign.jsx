@@ -4,7 +4,8 @@ import WideWidget from '../../components/ui/widewidget/WideWidget';
 import DataTable from '../../components/table/DataTable';
 import Modal from '../../components/ui/Modal';
 import { UserContext } from '../../context/context';
-import { fetchActiveCompaigns, updateCRMFromWB, fetchCardsForCampaign, syncCampaignSubCards } from '../../services/api/advertService';
+import { fetchActiveCompaigns, updateCRMFromWB, fetchCardsForCampaign, 
+        syncCampaignSubCards, fetchCampaignCards } from '../../services/api/advertService';
 import { fetchGoodsGroups } from '../../services/api/goodsService';
 import { getTableKeys } from '../../utils/tableHelpers';
 import { getTableLocale } from '../../services/api/tableService';
@@ -23,26 +24,30 @@ const CRM_Campaigns = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentCampaignId, setCurrentCampaignId] = useState(null);
-  
 
-  // Модалка с карточками
+  // Referencies  
   const campaignIdRef = useRef(null);
+
+  // Modal with cards
+  const [modalSource, setModalSource] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
   const [cardsData, setCardsData] = useState([]);
   const [cardsColumns, setCardsColumns] = useState([]);
   const [cardsLoading, setCardsLoading] = useState(false);
 
-  const handleShowCards = async (row) => {
+  const handleShowCards = async (row, source) => {
     campaignIdRef.current = row.advertid;
+    setModalSource(source);
     setModalTitle(`Карточки кампании: ${row.campaign_name || row.advertid}`);
     setModalOpen(true);
     setCardsLoading(true);
 
     try {
-      const cards = await fetchCardsForCampaign(campaignIdRef.current, token);
+      const cards = source === 'cards'
+        ? await fetchCampaignCards(row.advertid, token)
+        : await fetchCardsForCampaign(row.advertid, token);
 
-      // Сортируем
       const sorted = sortGroupedData(cards);
       setCardsData(sorted);
 
@@ -56,8 +61,6 @@ const CRM_Campaigns = () => {
           onChange: (field, value, row) => {
             if (field === 'has_link') {
               handleHasLinkChange(value, row);
-            } else {
-              handleHasLinkChange(field, value, row);
             }
           },
         });
@@ -103,10 +106,27 @@ const CRM_Campaigns = () => {
               style={{ padding: '2px 8px', fontSize: 13 }}
               onClick={(e) => {
                 e.stopPropagation();
-                handleShowCards(row);
+                handleShowCards(row, 'subCards');
               }}
             >
               {buttonColumns._cards.label}
+            </button>
+          ),
+        };
+      }
+      if (col.accessorKey === 'cards') {
+        return {
+          ...col,
+          cellRender: (_, row) => (
+            <button
+              className={styles.centeredButton}
+              style={{ padding: '2px 8px', fontSize: 13 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleShowCards(row, 'cards');
+              }}
+            >
+              {buttonColumns.cards.label}
             </button>
           ),
         };
@@ -125,7 +145,7 @@ const CRM_Campaigns = () => {
       setData(campaigns);
 
       if (campaigns.length > 0) {
-        const allKeys = [...getTableKeys(campaigns), '_groups', '_cards'];
+        const allKeys = [...getTableKeys(campaigns), 'cards', '_groups', '_cards'];
         const translations = await getTableLocale(allKeys, locale, token);
         const cols = buildTableConfig({ keys: allKeys, translations, mode: 'view' });
         const colsWithActions = buildColumnsWithActions(cols);

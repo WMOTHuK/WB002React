@@ -34,3 +34,11 @@ export async function syncCampaignSubCards(advertid, cards, token) {
   });
   return response.data;
 }
+
+export async function fetchCampaignCards(campaignId, token) {
+  const response = await axios.get(`${CRM_API}/getampaigncards`, {
+    params: { campaign_id: campaignId },
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}

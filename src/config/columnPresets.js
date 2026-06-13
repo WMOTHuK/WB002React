@@ -12,7 +12,7 @@ export const columnTypes = {
   date:      ['pause_time', 'restart_time', 'change_date'],
   select:    ['oh_grp_sel', 'goods_type_sel', 'goods_grp_sel'],
   text:      [ 'oh_name', 'oh_desc', 'oh_grp_name', 'oh_grp_desc','goods_grp_name', 'goods_grp_desc','goods_type_name', 'goods_type_desc'],
-  button:    ['_groups', '_cards'],
+  button:    ['_groups', '_cards', 'cards'],
 };
 
 /**
@@ -95,6 +95,10 @@ export const cellStyles = {
  * value: { label, onClick? }
  */
 export const buttonColumns = {
+  cards: {
+    label: 'Карточки',
+    style: 'btnPrimary',
+  },
   _groups: {
     label: '+ Группа',
     style: 'btnPrimary', // можно css-класс
@@ -103,4 +107,5 @@ export const buttonColumns = {
     label: '+ Карточки',
     style: 'btnPrimary',
   },
+
 };
