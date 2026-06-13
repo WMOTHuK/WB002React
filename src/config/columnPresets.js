@@ -7,7 +7,7 @@
 export const columnTypes = {
   link:      ['nmid', 'advertid', 'ozid'],
   image:     ['card_photo'],
-  checkbox:  ['active', 'deleted'],
+  checkbox:  ['active', 'deleted', 'has_link'],
   number:    ['current_cost', 'price', 'discount', 'currentprice', 'dayprice', 'daydisc', 'nightprice', 'nightdisc', 'subjectid', 'imtid'],
   date:      ['pause_time', 'restart_time', 'change_date'],
   select:    ['oh_grp_sel', 'goods_type_sel', 'goods_grp_sel'],
@@ -26,7 +26,8 @@ export const editableFields = [
   'nightdisc',
   'active',
   'deleted',
-  'change_date'
+  'change_date',
+  'has_link'
 ];
 
 /**
@@ -96,10 +97,10 @@ export const cellStyles = {
 export const buttonColumns = {
   _groups: {
     label: '+ Группа',
-    style: 'primary', // можно css-класс
+    style: 'btnPrimary', // можно css-класс
   },
   _cards: {
     label: '+ Карточки',
-    style: 'primary',
+    style: 'btnPrimary',
   },
 };
