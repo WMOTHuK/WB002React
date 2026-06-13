@@ -24,3 +24,13 @@ export async function fetchCardsForCampaign(campaignId, token) {
   });
   return response.data;
 }
+
+export async function syncCampaignSubCards(advertid, cards, token) {
+  const response = await axios.post(`${CRM_API}/synccampaignsubcards`, {
+    advertid,
+    cards,
+  }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}

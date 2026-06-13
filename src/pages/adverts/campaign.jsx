@@ -1,10 +1,10 @@
 // src/pages/adverts/campaign.jsx
-import React, { useState, useEffect, useContext, useMemo } from 'react';
+import React, { useState, useEffect, useContext, useMemo, useRef} from 'react';
 import WideWidget from '../../components/ui/widewidget/WideWidget';
 import DataTable from '../../components/table/DataTable';
 import Modal from '../../components/ui/Modal';
 import { UserContext } from '../../context/context';
-import { fetchActiveCompaigns, updateCRMFromWB, fetchCardsForCampaign } from '../../services/api/advertService';
+import { fetchActiveCompaigns, updateCRMFromWB, fetchCardsForCampaign, syncCampaignSubCards } from '../../services/api/advertService';
 import { fetchGoodsGroups } from '../../services/api/goodsService';
 import { getTableKeys } from '../../utils/tableHelpers';
 import { getTableLocale } from '../../services/api/tableService';
@@ -22,8 +22,11 @@ const CRM_Campaigns = () => {
   const [columns, setColumns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentCampaignId, setCurrentCampaignId] = useState(null);
+  
 
   // Модалка с карточками
+  const campaignIdRef = useRef(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
   const [cardsData, setCardsData] = useState([]);
@@ -31,12 +34,13 @@ const CRM_Campaigns = () => {
   const [cardsLoading, setCardsLoading] = useState(false);
 
   const handleShowCards = async (row) => {
+    campaignIdRef.current = row.advertid;
     setModalTitle(`Карточки кампании: ${row.campaign_name || row.advertid}`);
     setModalOpen(true);
     setCardsLoading(true);
 
     try {
-      const cards = await fetchCardsForCampaign(row.advertid, token);
+      const cards = await fetchCardsForCampaign(campaignIdRef.current, token);
 
       // Сортируем
       const sorted = sortGroupedData(cards);
@@ -45,7 +49,18 @@ const CRM_Campaigns = () => {
       if (sorted.length > 0) {
         const keys = getTableKeys(sorted);
         const translations = await getTableLocale(keys, locale, token);
-        const cols = buildTableConfig({ keys, translations, mode: 'edit', onChange: handleCardChange, });
+        const cols = buildTableConfig({
+          keys,
+          translations,
+          mode: 'edit',
+          onChange: (field, value, row) => {
+            if (field === 'has_link') {
+              handleHasLinkChange(value, row);
+            } else {
+              handleHasLinkChange(field, value, row);
+            }
+          },
+        });
         setCardsColumns(cols);
       }
     } catch (err) {
@@ -55,12 +70,25 @@ const CRM_Campaigns = () => {
     }
   };
 
-  const handleCardChange = (field, value, row) => {
+  const handleHasLinkChange = async (value, row) => {
     setCardsData(prev =>
       prev.map(item =>
-        item.nmid === row.nmid ? { ...item, [field]: value } : item
+        item.nmid === row.nmid ? { ...item, has_link: value } : item
       )
     );
+
+    try {
+      await syncCampaignSubCards(campaignIdRef.current, [{  // ← берём из ref
+        vendorcode: row.vendorcode,
+        has_link: value,
+      }], token);
+    } catch (err) {
+      setCardsData(prev =>
+        prev.map(item =>
+          item.nmid === row.nmid ? { ...item, has_link: !value } : item
+        )
+      );
+    }
   };
 
   // Переопределяем _cards колонку с onClick
