@@ -178,3 +178,9 @@ export async function saveGoodsRow(row, originalRow, token) {
   }
 }
 
+export async function syncUserGoods(token) {
+  const response = await axios.post(`${CONTENT_API}/syncusergoods`, {}, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}

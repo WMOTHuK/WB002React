@@ -5,12 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import styles from '../../styles/styles.module.css';
 import DataTable from '../../components/table/DataTable';
 import { UserContext } from '../../context/context';
-import { downloadGoodsData, saveGoodsRow, fetchGoodsGroups } from '../../services/api/goodsService';
+import { downloadGoodsData, saveGoodsRow, fetchGoodsGroups, syncUserGoods } from '../../services/api/goodsService';
 import { useTableConfig } from '../../hooks/useTableConfig';
 import { useRowSave } from '../../hooks/useRowSave';
 import { changeGoodsGroup } from '../../services/api/goodsService';
 
 const GoodsMain = () => {
+  const [syncResult, setSyncResult] = useState(null);
+  const [syncError, setSyncError] = useState(null);
   const [status, setStatus] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -117,6 +119,18 @@ const GoodsMain = () => {
   const loadData = async () => {
     try {
       setLoading(true);
+      setError(null);
+      setSyncResult(null);
+      setSyncError(null);
+          // Sync goods from WB and OZON (one time at page load)
+      if (syncResult === null) {
+        try {
+          const sync = await syncUserGoods(userdata.userData?.userInfo?.token);
+          setSyncResult(sync);
+        } catch (err) {
+          setSyncError(err.response?.data?.error || err.message);
+        }
+      }
 
       // Загружаем группы для дроп-дауна
       const groupsData = await fetchGoodsGroups(
@@ -172,8 +186,24 @@ const GoodsMain = () => {
 
   return (
     <div className={styles.vidget}>
-      <div>{status.map((line, i) => <p key={i}>{line}</p>)}</div>
       <h2>Информация о товарах</h2>
+      {syncError && (
+        <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+          <div className={styles.error}>
+            Ошибка синхронизации: {syncError}
+          </div>
+        </div>
+      )}
+      {syncResult && (
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div className={styles.success}>
+            Синхронизация завершена.
+            <div>WB: добавлено {syncResult.wb.inserted}, обновлено {syncResult.wb.updated}, без изменений {syncResult.wb.unchanged} (всего {syncResult.wb.total})</div>
+            <div>OZON: добавлено {syncResult.ozon.inserted}, обновлено {syncResult.ozon.updated}, без изменений {syncResult.ozon.unchanged} (всего {syncResult.ozon.total})</div>
+          </div>
+        </div>
+      )}
+
       <DataTable
         data={sortedData}
         columns={columns}
