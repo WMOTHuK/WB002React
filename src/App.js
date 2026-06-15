@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { UserProvider, UserContext } from './context/context';
 import MenuWrapper from './components/layout/MenuWrapper';
 import ProtectedRoute from './router/ProtectedRoute';
+import FI_WBReportsList from './pages/finance/FI_WBReportsList';
 
 // Страницы
 // Home
@@ -22,7 +23,6 @@ import GoodsTypes from './pages/goods/GoodsTypes';
 import GoodsGroups from './pages/goods/GoodsGroups.jsx';
 
 // FI
-import FI_reporting from './pages/finance/fi_reporting';
 import FI_OverheadGroups from './pages/finance/FI_overheadGroups.jsx';
 import FI_OverheadTypes from './pages/finance/FI_OverheadTypes';
 import FI_OverheadValues from './pages/finance/FI_OverheadValues';
@@ -57,10 +57,10 @@ function App() {
             <Route path="/goods" element={<Goods />} />
             <Route path="/goods/types" element={<GoodsTypes />} />
             <Route path="/goods/groups" element={<GoodsGroups />} />
-            <Route path="/fi/reports" element={<FI_reporting />} />
             <Route path="/fi/overheads/groups" element={<FI_OverheadGroups />} />
             <Route path="/fi/overheads/types" element={<FI_OverheadTypes />} />
             <Route path="/fi/overheads/values" element={<FI_OverheadValues />} />
+            <Route path="/fi/wbreports/list" element={<FI_WBReportsList />} />
             <Route path="/crm/campaign" element={<Campaigns />} />
             <Route path="/crm/allcampaigns" element={<AllCampaigns />} />
             <Route path="/pricing" element={<Pricing />} />

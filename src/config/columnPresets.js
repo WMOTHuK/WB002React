@@ -5,14 +5,17 @@
  * Any field not listed here defaults to 'text'.
  */
 export const columnTypes = {
-  link:      ['nmid', 'advertid', 'ozid'],
+  link:      ['nmid', 'advertid', 'ozid', 'report_id'],
   image:     ['card_photo'],
   checkbox:  ['active', 'deleted', 'has_link', '_linked'],
-  number:    ['current_cost', 'price', 'discount', 'currentprice', 'dayprice', 'daydisc', 'nightprice', 'nightdisc', 'subjectid', 'imtid'],
+  number:    ['current_cost', 'price', 'discount', 'currentprice', 'dayprice', 'daydisc', 'nightprice', 'nightdisc', 'subjectid', 'imtid', 
+              "bank_payment_sum", "penalty_sum", "deduction_sum", "paid_acceptance_sum", "paid_storage_sum", "delivery_service_sum",
+              "for_pay_sum", "retail_amount_sum"],
   date:      ['pause_time', 'restart_time', 'change_date'],
   select:    ['oh_grp_sel', 'goods_type_sel', 'goods_grp_sel'],
   text:      [ 'oh_name', 'oh_desc', 'oh_grp_name', 'oh_grp_desc','goods_grp_name', 'goods_grp_desc','goods_type_name', 'goods_type_desc'],
   button:    ['_groups', '_cards', 'cards'],
+
 };
 
 /**
@@ -56,6 +59,7 @@ export const linkUrls = {
   nmid: (row) => `https://www.wildberries.ru/catalog/${row.nmid}/detail.aspx?targetUrl=GP`,
   ozid: (row) => `https://www.ozon.ru/product/${row.ozid}`,
   advertid: (row) => `https://cmp.wildberries.ru/campaigns/edit/36280250?advertID=${row.advertid}`,
+  report_id: (row) => `https://seller.wildberries.ru/suppliers-mutual-settlements/reports-implementations/reports-weekly-new/report/${row.report_id}`
   // user_id:  (row) => `/users/${row.user_id}`,
 };
 
@@ -109,4 +113,22 @@ export const buttonColumns = {
     style: 'btnPrimary',
   },
 
+};
+
+export const columnFormats = {
+  currency: [
+'sprice', 
+'current_cost', 
+'price', 
+'oh_amount', 
+'dayprice', 
+'nightprice', 
+"bank_payment_sum",
+"penalty_sum",
+"deduction_sum",
+"paid_acceptance_sum",
+"paid_storage_sum",
+"delivery_service_sum",
+"for_pay_sum",
+"retail_amount_sum"],
 };

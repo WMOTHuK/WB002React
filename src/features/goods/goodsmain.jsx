@@ -9,6 +9,7 @@ import { downloadGoodsData, saveGoodsRow, fetchGoodsGroups, syncUserGoods } from
 import { useTableConfig } from '../../hooks/useTableConfig';
 import { useRowSave } from '../../hooks/useRowSave';
 import { changeGoodsGroup } from '../../services/api/goodsService';
+import StatusMessage from '../../components/ui/StatusMessage';
 
 const GoodsMain = () => {
   const [syncResult, setSyncResult] = useState(null);
@@ -187,22 +188,19 @@ const GoodsMain = () => {
   return (
     <div className={styles.vidget}>
       <h2>Информация о товарах</h2>
-      {syncError && (
-        <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-          <div className={styles.error}>
-            Ошибка синхронизации: {syncError}
-          </div>
-        </div>
-      )}
-      {syncResult && (
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <div className={styles.success}>
-            Синхронизация завершена.
-            <div>WB: добавлено {syncResult.wb.inserted}, обновлено {syncResult.wb.updated}, без изменений {syncResult.wb.unchanged} (всего {syncResult.wb.total})</div>
-            <div>OZON: добавлено {syncResult.ozon.inserted}, обновлено {syncResult.ozon.updated}, без изменений {syncResult.ozon.unchanged} (всего {syncResult.ozon.total})</div>
-          </div>
-        </div>
-      )}
+        <StatusMessage type="error">
+          {syncError && `Ошибка синхронизации: ${syncError}`}
+        </StatusMessage>
+
+        <StatusMessage type="success">
+          {syncResult && (
+            <>
+              Синхронизация завершена.
+              <div>WB: добавлено {syncResult.wb.inserted}, обновлено {syncResult.wb.updated}, без изменений {syncResult.wb.unchanged} (всего {syncResult.wb.total})</div>
+              <div>OZON: добавлено {syncResult.ozon.inserted}, обновлено {syncResult.ozon.updated}, без изменений {syncResult.ozon.unchanged} (всего {syncResult.ozon.total})</div>
+            </>
+          )}
+        </StatusMessage>
 
       <DataTable
         data={sortedData}

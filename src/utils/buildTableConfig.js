@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { columnTypes, editableFields, excludedFields, linkUrls, 
-         columnOrder, inputStyles, cellStyles, buttonColumns  } from '../config/columnPresets';
+         columnOrder, inputStyles, cellStyles, buttonColumns, columnFormats   } from '../config/columnPresets';
 
 function getFieldType(key) {
   for (const [type, fields] of Object.entries(columnTypes)) {
@@ -45,6 +45,13 @@ export function buildTableConfig({ keys, translations = [], mode = 'view', navig
         delete overrides.header;  // не перезаписываем header из переводов
         Object.assign(column, overrides);
       }
+
+      // Coloumn format
+      const format = Object.keys(columnFormats).find(fmt => columnFormats[fmt].includes(key));
+      if (format) {
+        column.format = format;
+      }
+
       // Select type
       if (column.type === 'select') {
         column.options = column.options || [];

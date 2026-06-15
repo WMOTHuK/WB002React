@@ -176,3 +176,9 @@
 .btnPrimary:hover {
   background: #1565c0;
 }
+
+td .numberCell {
+  text-align: right;
+  display: block;
+  width: 100%;
+}

@@ -100,6 +100,10 @@ const TableCell = React.memo(({ col, value, rowData }) => {
         </span>
       );
     case 'number':
+      const formatted = col.format === 'currency'
+        ? Number(value || 0).toLocaleString('ru-RU')
+        : value;
+
       if (col.editable) {
         return (
           <input
@@ -110,7 +114,7 @@ const TableCell = React.memo(({ col, value, rowData }) => {
           />
         );
       }
-      return value;
+      return <span className={styles.numberCell}>{formatted}</span>;
 
     case 'date':
       if (col.editable) {

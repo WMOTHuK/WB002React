@@ -68,3 +68,20 @@ export async function saveMonthlyOH(updates, token) {
   });
   return response.data;
 }
+
+export async function updateWBReportsList(dateFrom, dateTo, token) {
+  const response = await axios.post(`${API}/updatewbreportslist`, {
+    dateFrom,
+    dateTo,
+  }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}
+
+export async function fetchWBReportsList(token) {
+  const response = await axios.get(`${API}/getwbreportslist`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}
