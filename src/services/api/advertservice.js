@@ -10,8 +10,9 @@ export async function updateCRMFromWB(token) {
   return response.data;
 }
 
-export async function fetchActiveCompaigns(token) {
-  const response = await axios.get(`${CRM_API}/getactivecompaigns`, {
+export async function fetchCompaigns(token, activeOnly = true) {
+  const response = await axios.get(`${CRM_API}/getcompaigns`, {
+    params: { active_only: activeOnly },
     headers: { Authorization: `Bearer ${token}` }
   });
   return response.data;

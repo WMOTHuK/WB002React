@@ -1,10 +1,9 @@
-// src/pages/adverts/campaign.jsx
 import React, { useState, useEffect, useContext, useMemo, useRef} from 'react';
 import WideWidget from '../../components/ui/widewidget/WideWidget';
 import DataTable from '../../components/table/DataTable';
 import Modal from '../../components/ui/Modal';
 import { UserContext } from '../../context/context';
-import { fetchActiveCompaigns, updateCRMFromWB, fetchCardsForCampaign, 
+import { fetchCompaigns, updateCRMFromWB, fetchCardsForCampaign, 
         syncCampaignSubCards, fetchCampaignCards, fetchGoodsGroupsWithTypes,
         linkGroupToCampaign  } from '../../services/api/advertService';
 import { fetchGoodsGroups } from '../../services/api/goodsService';
@@ -15,7 +14,7 @@ import { buttonColumns } from '../../config/columnPresets';
 import { sortGroupedData, createGroupSeparator } from '../../utils/sortAndGroup';
 import styles from '../../styles/styles.module.css';
 
-const CRM_Campaigns = () => {
+const CRM_Campaigns = ({ activeOnly = true }) => {
   const userdata = useContext(UserContext);
   const token = userdata.userData?.userInfo?.token;
   const locale = userdata.userData?.locale || 'RU';
@@ -239,7 +238,7 @@ const CRM_Campaigns = () => {
       setError(null);
 
       await updateCRMFromWB(token);
-      const campaigns = await fetchActiveCompaigns(token);
+      const campaigns = await fetchCompaigns(token, activeOnly);
       setData(campaigns);
 
       if (campaigns.length > 0) {

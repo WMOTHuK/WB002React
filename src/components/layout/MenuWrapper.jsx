@@ -13,7 +13,8 @@ const subMenuItems = {
     { path: "/fi/overheads/values", label: "Значения накладных" },
   ],
   CRM: [
-    { path: "/crm/campaign", label: "Рекламные компании" }
+    { path: "/crm/campaign", label: "Активные компании" },
+    { path: "/crm/allcampaigns", label: "Все компании" }
   ],
   Goods: [
     { path: "/goods", label: "Список товаров" },
