@@ -14,7 +14,7 @@ export const columnTypes = {
   date:      ['pause_time', 'restart_time', 'change_date'],
   select:    ['oh_grp_sel', 'goods_type_sel', 'goods_grp_sel'],
   text:      [ 'oh_name', 'oh_desc', 'oh_grp_name', 'oh_grp_desc','goods_grp_name', 'goods_grp_desc','goods_type_name', 'goods_type_desc'],
-  button:    ['_groups', '_cards', 'cards'],
+  button:    ['_groups', '_cards', 'cards', '_costs'],
 
 };
 
@@ -100,19 +100,13 @@ export const cellStyles = {
  * value: { label, onClick? }
  */
 export const buttonColumns = {
-  cards: {
-    label: 'Карточки',
-    style: 'btnPrimary',
+  cards: { label: 'Карточки', style: 'btnPrimary',
   },
-  _groups: {
-    label: '+ Группа',
-    style: 'btnPrimary', // можно css-класс
+  _groups: { label: '+ Группа', style: 'btnPrimary',
   },
-  _cards: {
-    label: '+ Карточки',
-    style: 'btnPrimary',
+  _cards: { label: '+ Карточки', style: 'btnPrimary',
   },
-
+  _costs: { label: 'Затраты', style: 'btnPrimary' },
 };
 
 export const columnFormats = {

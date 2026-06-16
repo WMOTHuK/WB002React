@@ -5,13 +5,14 @@ import Modal from '../../components/ui/Modal';
 import { UserContext } from '../../context/context';
 import { fetchCompaigns, updateCRMFromWB, fetchCardsForCampaign, 
         syncCampaignSubCards, fetchCampaignCards, fetchGoodsGroupsWithTypes,
-        linkGroupToCampaign  } from '../../services/api/advertService';
+        linkGroupToCampaign, updateCRMCampaignsCosts, fetchCostsByAdvertId  } from '../../services/api/advertService';
 import { fetchGoodsGroups } from '../../services/api/goodsService';
 import { getTableKeys } from '../../utils/tableHelpers';
 import { getTableLocale } from '../../services/api/tableService';
 import { buildTableConfig } from '../../utils/buildTableConfig';
 import { buttonColumns } from '../../config/columnPresets';
 import { sortGroupedData, createGroupSeparator } from '../../utils/sortAndGroup';
+import SyncByDateForm from '../../components/ui/SyncByDateForm';
 import styles from '../../styles/styles.module.css';
 
 const CRM_Campaigns = ({ activeOnly = true }) => {
@@ -42,6 +43,14 @@ const CRM_Campaigns = ({ activeOnly = true }) => {
   const [groupsData, setGroupsData] = useState([]);
   const [groupsColumns, setGroupsColumns] = useState([]);
   const [groupsLoading, setGroupsLoading] = useState(false);
+
+  // Modal with costs
+  const [costsModalOpen, setCostsModalOpen] = useState(false);
+  const [costsModalTitle, setCostsModalTitle] = useState('');
+  const [costsData, setCostsData] = useState([]);
+  const [costsColumns, setCostsColumns] = useState([]);
+  const [costsLoading, setCostsLoading] = useState(false);
+
 
   const handleShowCards = async (row, source) => {
     campaignIdRef.current = row.advertid;
@@ -125,6 +134,28 @@ const CRM_Campaigns = ({ activeOnly = true }) => {
     }
   };
 
+  const handleShowCosts = async (row) => {
+    setCostsModalTitle(`Затраты кампании: ${row.campaign_name || row.advertid}`);
+    setCostsModalOpen(true);
+    setCostsLoading(true);
+
+    try {
+      const costs = await fetchCostsByAdvertId(row.advertid, token);
+      setCostsData(costs);
+
+      if (costs.length > 0) {
+        const keys = getTableKeys(costs);
+        const translations = await getTableLocale(keys, locale, token);
+        const cols = buildTableConfig({ keys, translations, mode: 'view' });
+        setCostsColumns(cols);
+      }
+    } catch (err) {
+      console.error('Ошибка загрузки затрат:', err);
+    } finally {
+      setCostsLoading(false);
+    }
+  };
+
   const handleGroupToggle = async (checked, groupRow) => {
     if (!checked) return; // Снятие чекбокса не делаем
 
@@ -177,6 +208,23 @@ const CRM_Campaigns = ({ activeOnly = true }) => {
   // Переопределяем _cards колонку с onClick
   const buildColumnsWithActions = (baseColumns) => {
     return baseColumns.map(col => {
+      if (col.accessorKey === '_costs') {
+        return {
+          ...col,
+          cellRender: (_, row) => (
+            <button
+              className={styles.centeredButton}
+              style={{ padding: '2px 8px', fontSize: 13 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleShowCosts(row);
+              }}
+            >
+              Затраты
+            </button>
+          ),
+        };
+      }
       if (col.accessorKey === '_cards') {
         return {
           ...col,
@@ -242,7 +290,7 @@ const CRM_Campaigns = ({ activeOnly = true }) => {
       setData(campaigns);
 
       if (campaigns.length > 0) {
-        const allKeys = [...getTableKeys(campaigns), 'cards', '_groups', '_cards'];
+        const allKeys = [...getTableKeys(campaigns), '_costs', 'cards', '_groups', '_cards' ];
         const translations = await getTableLocale(allKeys, locale, token);
         const cols = buildTableConfig({ keys: allKeys, translations, mode: 'view' });
         const colsWithActions = buildColumnsWithActions(cols);
@@ -265,6 +313,13 @@ const CRM_Campaigns = ({ activeOnly = true }) => {
 
   return (
     <WideWidget title="Рекламные кампании">
+      <div className={styles.contentCentered}>
+      <SyncByDateForm
+        label="Получить с серверов WB затраты по компаниям за период с"
+        apiFn={updateCRMCampaignsCosts}
+        token={token}
+      />
+
       <div className={styles.contentCentered}>
         {error && <div className={styles.error}>Ошибка: {error}</div>}
 
@@ -315,6 +370,18 @@ const CRM_Campaigns = ({ activeOnly = true }) => {
           )}
         </Modal>
       )}
+      {costsModalOpen && (
+        <Modal title={costsModalTitle} onClose={() => setCostsModalOpen(false)}>
+          {costsLoading ? (
+            <div>Загрузка...</div>
+          ) : costsData.length > 0 ? (
+            <DataTable data={costsData} columns={costsColumns} />
+          ) : (
+            <p>Нет данных о затратах</p>
+          )}
+        </Modal>
+      )}
+      </div>
     </WideWidget>
   );
 };

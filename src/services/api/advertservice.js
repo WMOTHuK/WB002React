@@ -60,3 +60,21 @@ export async function linkGroupToCampaign(advertid, goods_grp_id, token) {
   });
   return response.data;
 }
+
+export async function updateCRMCampaignsCosts(dateFrom, dateTo, token) {
+  const response = await axios.post(`${CRM_API}/updatecrmcampaignscosts`, {
+    dateFrom,
+    dateTo,
+  }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}
+
+export async function fetchCostsByAdvertId(advertId, token) {
+  const response = await axios.get(`${CRM_API}/getcostsbyadvertid`, {
+    params: { advertId },
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}

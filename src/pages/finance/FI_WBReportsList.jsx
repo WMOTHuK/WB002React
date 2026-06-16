@@ -7,6 +7,7 @@ import { updateWBReportsList, fetchWBReportsList } from '../../services/api/fina
 import { getTableKeys } from '../../utils/tableHelpers';
 import { getTableLocale } from '../../services/api/tableService';
 import { buildTableConfig } from '../../utils/buildTableConfig';
+import SyncByDateForm from '../../components/ui/SyncByDateForm';
 import styles from '../../styles/styles.module.css';
 
 const FI_WBReportsList = () => {
@@ -77,28 +78,13 @@ const FI_WBReportsList = () => {
   return (
     <WideWidget title="WB Список отчётов">
       <div className={styles.contentCentered}>
-        <div className={styles.reportsForm}>
-        <label>Получить с серверов WB список отчётов за период с</label>
-        <input type="date" className={styles.overheadInput} value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
-        <label>по</label>
-        <input type="date" className={styles.overheadInput} value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
-        <button className={styles.centeredButton} onClick={handleUpdate} disabled={syncing}>
-            {syncing ? 'Загрузка...' : 'Получить'}
-        </button>
-        </div>
 
-        <StatusMessage type="error">{syncError}</StatusMessage>
-        <StatusMessage type="success">
-            {syncResult && (
-            <>
-                Синхронизация с WB:{' '}
-                Получено: {syncResult.processed ?? '—'},{' '}
-                Вставлено: {syncResult.inserted ?? '—'},{' '}
-                Обновлено: {syncResult.updated ?? '—'},{' '}
-                Ошибки: {syncResult.errors ?? '—'}
-            </>
-            )}
-        </StatusMessage>
+        <SyncByDateForm
+            label="Получить с серверов WB список отчётов за период с"
+            apiFn={updateWBReportsList}
+            token={token}
+            onSuccess={() => loadData()}
+        />
 
         {loading ? (
           <div>Загрузка таблицы...</div>
