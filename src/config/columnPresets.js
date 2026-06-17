@@ -15,7 +15,7 @@ export const columnTypes = {
   select:    ['oh_grp_sel', 'goods_type_sel', 'goods_grp_sel'],
   text:      [ 'oh_name', 'oh_desc', 'oh_grp_name', 'oh_grp_desc','goods_grp_name', 'goods_grp_desc','goods_type_name', 'goods_type_desc'],
   button:    ['_groups', '_cards', 'cards', '_costs'],
-
+  custom:    ['_actions', 'has_items'],
 };
 
 /**

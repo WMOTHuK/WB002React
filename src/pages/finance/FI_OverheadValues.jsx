@@ -64,8 +64,6 @@ const FI_OverheadValues = () => {
       m.push(d);
     }
     // Используем m, а не months (который ещё не объявлен)
-    console.log('months:', m.map(d => ({ iso: d.toISOString(), key: d.toISOString().slice(0, 7) })));
-    console.log('months[3] key:', m[3]?.toISOString().slice(0, 7));
     return m;
   }, [centerDate]);
 

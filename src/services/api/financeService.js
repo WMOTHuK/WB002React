@@ -85,3 +85,12 @@ export async function fetchWBReportsList(token) {
   });
   return response.data;
 }
+
+export async function fetchWBReportDetails(reportId, token) {
+  const response = await axios.post(`${API}/getwbfireportdetailsbyid`, {
+    report_id: reportId,
+  }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}

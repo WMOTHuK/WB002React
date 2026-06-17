@@ -3,10 +3,11 @@ import WideWidget from '../../components/ui/widewidget/WideWidget';
 import DataTable from '../../components/table/DataTable';
 import StatusMessage from '../../components/ui/StatusMessage';
 import { UserContext } from '../../context/context';
-import { updateWBReportsList, fetchWBReportsList } from '../../services/api/financeService';
+import { updateWBReportsList, fetchWBReportsList, fetchWBReportDetails } from '../../services/api/financeService';
 import { getTableKeys } from '../../utils/tableHelpers';
 import { getTableLocale } from '../../services/api/tableService';
 import { buildTableConfig } from '../../utils/buildTableConfig';
+import { withActionIcon } from '../../utils/columnHelpers';
 import SyncByDateForm from '../../components/ui/SyncByDateForm';
 import styles from '../../styles/styles.module.css';
 
@@ -29,8 +30,26 @@ const FI_WBReportsList = () => {
 
   const [data, setData] = useState([]);
   const [columns, setColumns] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // Main table update status
+  const [loadingReportId, setLoadingReportId] = useState(null); 
+  const [successReportId, setSuccessReportId] = useState(null);
+  const [errorReportId, setErrorReportId] = useState(null);
+  const handleDownloadReport = async (row) => {
+    try {
+      await fetchWBReportDetails(row.report_id, token);
+      // Сначала показываем успех
+      setSuccessReportId(row.report_id);
+      setTimeout(() => setSuccessReportId(null), 2000);
+      // Потом перезагружаем таблицу
+      setTimeout(() => loadData(), 2000);
+    } catch (err) {
+      setErrorReportId(row.report_id);
+      setTimeout(() => setErrorReportId(null), 3000);
+    }
+  };
 
+
+  
   const loadData = async () => {
     setLoading(true);
     try {
@@ -41,7 +60,12 @@ const FI_WBReportsList = () => {
         const keys = getTableKeys(reports);
         const translations = await getTableLocale(keys, locale, token);
         const cols = buildTableConfig({ keys, translations, mode: 'view' });
-        setColumns(cols);
+        const getLoadingId = () => loadingReportId;
+        const mapper = withActionIcon('has_items', handleDownloadReport);
+        const colsWithActions = cols.map(col =>
+          mapper(col, () => loadingReportId, setLoadingReportId, () => successReportId, setSuccessReportId)
+        );
+        setColumns(colsWithActions)
       }
     } catch (err) {
       console.error('Ошибка загрузки отчётов:', err);
@@ -53,6 +77,29 @@ const FI_WBReportsList = () => {
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    if (data.length === 0) return;
+
+    const buildCols = async () => {
+      const keys = getTableKeys(data);
+      const translations = await getTableLocale(keys, locale, token);
+      const cols = buildTableConfig({ keys, translations, mode: 'view' });
+      const mapper = withActionIcon('has_items', handleDownloadReport);
+      const colsWithActions = cols.map(col =>
+        mapper(
+          col,
+          () => loadingReportId, setLoadingReportId,
+          () => successReportId, setSuccessReportId,
+          () => errorReportId, setErrorReportId
+        )
+      );
+      setColumns(colsWithActions);
+    };
+
+    buildCols();
+  }, [data, loadingReportId, successReportId, errorReportId]);
+
 
   const handleUpdate = async () => {
     if (!dateFrom || !dateTo) {
@@ -74,6 +121,9 @@ const FI_WBReportsList = () => {
       setSyncing(false);
     }
   };
+
+
+
 
   return (
     <WideWidget title="WB Список отчётов">
