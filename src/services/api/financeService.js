@@ -102,3 +102,12 @@ export async function fetchWBReportSummary(limit, token) {
   });
   return response.data;
 }
+
+export async function calculateWBReport(reportId, token) {
+  const response = await axios.post(`${API}/calculatewbreport`, {
+    reportId,
+  }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}
