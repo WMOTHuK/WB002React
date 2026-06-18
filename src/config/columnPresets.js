@@ -129,10 +129,3 @@ export const columnFormats = {
 "retail_amount_sum"],
 };
 
-/**
- * Fields whose values should be translated.
- * Key = accessorKey, Value = translation key prefix (or true)
- */
-export const translatableFields = [
-  'field', 
-];
