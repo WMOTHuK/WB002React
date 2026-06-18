@@ -12,6 +12,7 @@ const subMenuItems = {
     { path: "/fi/overheads/types", label: "Категории накладных" },
     { path: "/fi/overheads/values", label: "Значения накладных" },
     { path: "/fi/wbreports/list", label: "WB Список отчётов" },
+    { path: "/fi/wbreports/summary", label: "WB недельные отчёты" },
   ],
   CRM: [
     { path: "/crm/campaign", label: "Активные компании" },

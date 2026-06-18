@@ -2,7 +2,9 @@
 
 import React from 'react';
 import { columnTypes, editableFields, excludedFields, linkUrls, 
-         columnOrder, inputStyles, cellStyles, buttonColumns, columnFormats   } from '../config/columnPresets';
+         columnOrder, inputStyles, cellStyles, buttonColumns, 
+         columnFormats, translatableFields    } from '../config/columnPresets';
+         
 
 function getFieldType(key) {
   for (const [type, fields] of Object.entries(columnTypes)) {
@@ -108,6 +110,14 @@ export function buildTableConfig({ keys, translations = [], mode = 'view', navig
             {btn.label}
           </button>
         );
+      }
+
+      // Make translation if field is translatable
+      if (translatableFields.includes(key)) {
+        column.type = 'custom';
+        column.cellRender = (value) => {
+          return valueTranslations[value] || value;
+        };
       }
       return column;
     });

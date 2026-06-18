@@ -69,6 +69,7 @@ export const linkUrls = {
  * All other fields follow in their natural order from the data.
  */
 export const columnOrder = [
+'field'
 
 ];
 
@@ -92,6 +93,7 @@ export const cellStyles = {
   oh_grp_name: 'bold', 
   goods_grp_name: 'bold',
   goods_type_name: 'bold',
+  field: 'bold'
 };
 
 /**
@@ -126,3 +128,11 @@ export const columnFormats = {
 "for_pay_sum",
 "retail_amount_sum"],
 };
+
+/**
+ * Fields whose values should be translated.
+ * Key = accessorKey, Value = translation key prefix (or true)
+ */
+export const translatableFields = [
+  'field', 
+];

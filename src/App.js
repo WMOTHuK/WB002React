@@ -5,6 +5,7 @@ import { UserProvider, UserContext } from './context/context';
 import MenuWrapper from './components/layout/MenuWrapper';
 import ProtectedRoute from './router/ProtectedRoute';
 import FI_WBReportsList from './pages/finance/FI_WBReportsList';
+import FI_WBReportSummary from './pages/finance/FI_WBReportSummary';
 
 // Страницы
 // Home
@@ -61,6 +62,7 @@ function App() {
             <Route path="/fi/overheads/types" element={<FI_OverheadTypes />} />
             <Route path="/fi/overheads/values" element={<FI_OverheadValues />} />
             <Route path="/fi/wbreports/list" element={<FI_WBReportsList />} />
+            <Route path="/fi/wbreports/summary" element={<FI_WBReportSummary />} />
             <Route path="/crm/campaign" element={<Campaigns />} />
             <Route path="/crm/allcampaigns" element={<AllCampaigns />} />
             <Route path="/pricing" element={<Pricing />} />
