@@ -182,3 +182,27 @@ td .numberCell {
   display: block;
   width: 100%;
 }
+
+.percentInput {
+  position: relative;
+  display: inline-block;
+}
+
+.percentInput input {
+  padding-right: 22px !important;
+}
+
+.percentInput::after {
+  content: '%';
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555;
+  pointer-events: none;
+  font-size: 14px;
+}
+
+.percent {
+  white-space: nowrap;
+}

@@ -36,6 +36,9 @@ import AllCampaigns from './pages/adverts/allcampaigns';
 // API
 import Apikeysupload from './features/apikeys/apikeysupload';
 
+// Settings
+import UserSettings from './pages/settings/UserSettings';
+
 const LoginRoute = () => {
   const { userData, authChecked } = useContext(UserContext);
 
@@ -67,6 +70,7 @@ function App() {
             <Route path="/crm/allcampaigns" element={<AllCampaigns />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/apikeysupload" element={<Apikeysupload />} />
+            <Route path="/settings" element={<UserSettings />} />
           </Route>
         </Routes>
       </Router>

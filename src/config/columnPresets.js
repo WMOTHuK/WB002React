@@ -11,11 +11,12 @@ export const columnTypes = {
   number:    ['current_cost', 'price', 'discount', 'currentprice', 'dayprice', 'daydisc', 'nightprice', 'nightdisc', 'subjectid', 'imtid', 
               "bank_payment_sum", "penalty_sum", "deduction_sum", "paid_acceptance_sum", "paid_storage_sum", "delivery_service_sum",
               "for_pay_sum", "retail_amount_sum"],
-  date:      ['pause_time', 'restart_time', 'change_date'],
-  select:    ['oh_grp_sel', 'goods_type_sel', 'goods_grp_sel'],
+  date:      ['pause_time', 'restart_time', 'change_date', 'valid_from', 'valid_to'],
+  select:    ['oh_grp_sel', 'goods_type_sel', 'goods_grp_sel', 'locale'],
   text:      [ 'oh_name', 'oh_desc', 'oh_grp_name', 'oh_grp_desc','goods_grp_name', 'goods_grp_desc','goods_type_name', 'goods_type_desc'],
   button:    ['_groups', '_cards', 'cards', '_costs'],
   custom:    ['_actions', 'has_items'],
+  percent:   ['seller_tax_rate', 'vat_tax_rate'], // добавь свои поля
 };
 
 /**
@@ -31,7 +32,10 @@ export const editableFields = [
   'deleted',
   'change_date',
   'has_link',
-  '_linked'
+  '_linked',
+  'valid_from',
+  'seller_tax_rate',
+  'vat_tax_rate'
 ];
 
 /**
@@ -93,7 +97,8 @@ export const cellStyles = {
   oh_grp_name: 'bold', 
   goods_grp_name: 'bold',
   goods_type_name: 'bold',
-  field: 'bold'
+  field: 'bold',
+  login: 'bold'
 };
 
 /**
@@ -129,3 +134,13 @@ export const columnFormats = {
 "retail_amount_sum"],
 };
 
+/**
+ * Fixed options for select columns.
+ * Key = accessorKey, Value = [{ value, label }]
+ */
+export const selectOptions = {
+  locale: [
+    { value: 'RU', label: 'RU' },
+    { value: 'EN', label: 'EN' },
+  ],
+};

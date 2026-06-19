@@ -31,6 +31,8 @@ function getColWidth(colType) {
       .trim();
     return parseInt(cbWidth) + parseInt(padding);
   }
+  if (colType === 'date') return 120;    // ← фиксированная ширина для дат
+  if (colType === 'percent') return 90;  // ← фиксированная ширина для процентов
   return null;
 }
 
@@ -117,17 +119,17 @@ const TableCell = React.memo(({ col, value, rowData }) => {
       return <span className={styles.numberCell}>{formatted}</span>;
 
     case 'date':
-      if (col.editable) {
-        return (
-          <input
-            type="date"
-            className={inputClass}
-            defaultValue={value ? value.slice(0, 10) : ''}
-            onBlur={(e) => col.onChange?.(e.target.value, rowData)}
-          />
-        );
-      }
-      return value ? new Date(value).toLocaleDateString('ru-RU') : '';
+        if (col.editable) {
+          return (
+            <input
+              type="date"
+              className={inputClass}
+              defaultValue={value ? value.slice(0, 10) : ''}
+              onBlur={(e) => col.onChange?.(e.target.value, rowData)}
+            />
+          );
+        }
+        return value ? value.slice(0, 10).split('-').reverse().join('.') : '';
 
     // Добавь тип 'textarea' для многострочного ввода
     case 'textarea':
@@ -146,6 +148,21 @@ const TableCell = React.memo(({ col, value, rowData }) => {
     case 'custom':
       return col.cellRender ? col.cellRender(value, rowData) : value;
 
+    case 'percent':
+      if (col.editable) {
+        return (
+          <span className={styles.percentInput}>
+            <input
+              type="number"
+              className={inputClass}
+              defaultValue={value ?? ''}
+              onBlur={(e) => col.onChange?.(Number(e.target.value), rowData)}
+            />
+          </span>
+        );
+      }
+      return <span className={styles.numberCell}>{value != null ? `${value}%` : ''}</span>;
+      
     case 'text':
     default:
       if (col.editable) {

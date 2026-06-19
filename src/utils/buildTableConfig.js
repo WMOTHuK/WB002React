@@ -3,7 +3,7 @@
 import React from 'react';
 import { columnTypes, editableFields, excludedFields, linkUrls, 
          columnOrder, inputStyles, cellStyles, buttonColumns, 
-         columnFormats,   } from '../config/columnPresets';
+         columnFormats, selectOptions   } from '../config/columnPresets';
          
 
 function getFieldType(key) {
@@ -56,10 +56,9 @@ export function buildTableConfig({ keys, translations = [], mode = 'view', navig
 
       // Select type
       if (column.type === 'select') {
-        column.options = column.options || [];
+        column.options = column.options || selectOptions[key] || [];
         column.placeholder = column.placeholder || 'Выберите...';
         column.editable = true;
-        // Берём onChange из columnOverrides, иначе из общего
         column.onChange = columnOverrides[key]?.onChange || ((value, row) => {
           if (onChange) onChange(key, value, row);
         });

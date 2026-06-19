@@ -104,6 +104,9 @@ const MenuWrapper = () => {
               </li>
               <li className={styles.userInfo}>
                 Вы вошли как: <span>{userData.userInfo.login}</span>
+                <Link to="/settings" style={{ marginLeft: 8, fontSize: 18, textDecoration: 'none' }} title="Настройки">
+                  ⚙️
+                </Link>
               </li>
             </>
           ) : (
