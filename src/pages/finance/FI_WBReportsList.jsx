@@ -34,20 +34,29 @@ const FI_WBReportsList = () => {
   const [loadingReportId, setLoadingReportId] = useState(null); 
   const [successReportId, setSuccessReportId] = useState(null);
   const [errorReportId, setErrorReportId] = useState(null);
+
+  const [detailResult, setDetailResult] = useState(null);
+  const [detailError, setDetailError] = useState(null);
+
+
   const handleDownloadReport = async (row) => {
+    setDetailResult(null);
+    setDetailError(null);
+
     try {
-      await fetchWBReportDetails(row.report_id, token);
-      // Сначала показываем успех
+      const result = await fetchWBReportDetails(row.report_id, token);
+      setDetailResult(result);
       setSuccessReportId(row.report_id);
-      setTimeout(() => setSuccessReportId(null), 2000);
-      // Потом перезагружаем таблицу
-      setTimeout(() => loadData(), 2000);
+      setTimeout(() => {
+        setSuccessReportId(null);
+        loadData();
+      }, 2000);
     } catch (err) {
       setErrorReportId(row.report_id);
+      setDetailError(err.response?.data?.error || err.message);
       setTimeout(() => setErrorReportId(null), 3000);
     }
   };
-
 
   
   const loadData = async () => {
@@ -135,6 +144,16 @@ const FI_WBReportsList = () => {
             token={token}
             onSuccess={() => loadData()}
         />
+
+        <StatusMessage type="success">
+          {detailResult && (
+            <>
+              Детали отчёта обновлены. Получено: {detailResult.processed ?? '—'}, вставлено: {detailResult.inserted ?? '—'}, пропущено: {detailResult.skipped ?? '—'}, ошибки: {detailResult.errors ?? '—'}
+            </>
+          )}
+        </StatusMessage>
+        <StatusMessage type="error">{detailError}</StatusMessage>
+
 
         {loading ? (
           <div>Загрузка таблицы...</div>
