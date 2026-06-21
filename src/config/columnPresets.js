@@ -5,7 +5,7 @@
  * Any field not listed here defaults to 'text'.
  */
 export const columnTypes = {
-  link:      ['nmid', 'advertid', 'ozid', 'report_id'],
+  link:      ['nm_id', 'advertid', 'ozid', 'report_id'],
   image:     ['card_photo'],
   checkbox:  ['active', 'deleted', 'has_link', '_linked'],
   number:    ['current_cost', 'price', 'discount', 'currentprice', 'dayprice', 'daydisc', 'nightprice', 'nightdisc', 'subjectid', 'imtid', 
@@ -60,7 +60,7 @@ export const excludedFields = [
  * Each function receives the row data and returns a URL.
  */
 export const linkUrls = {
-  nmid: (row) => `https://www.wildberries.ru/catalog/${row.nmid}/detail.aspx?targetUrl=GP`,
+  nm_id: (row) => `https://www.wildberries.ru/catalog/${row.nm_id}/detail.aspx?targetUrl=GP`,
   ozid: (row) => `https://www.ozon.ru/product/${row.ozid}`,
   advertid: (row) => `https://cmp.wildberries.ru/campaigns/edit/36280250?advertID=${row.advertid}`,
   report_id: (row) => `https://seller.wildberries.ru/suppliers-mutual-settlements/reports-implementations/reports-weekly-new/report/${row.report_id}`
