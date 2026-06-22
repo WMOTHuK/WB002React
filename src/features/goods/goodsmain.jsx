@@ -35,21 +35,23 @@ const GoodsMain = () => {
 
   // Кастомная функция сохранения
   const handleSaveRow = useCallback(async (row) => {
-    const originalRow = originalDataRef.current.find(r => r.nmid === row.nmid);
+    const originalRow = originalDataRef.current.find(r => r.vendorcode === row.vendorcode);
     return saveGoodsRow(row, originalRow, userdata.userData?.userInfo?.token);
   }, [userdata]);
 
   const { markChanged, actionsColumn } = useRowSave({
     saveFn: handleSaveRow,
-    getRowId: (row) => String(row.nmid),
+    getRowId: (row) => row.vendorcode,
   });
 
   const handleCellChange = useCallback((field, value, row) => {
+    console.log('handleCellChange called:', field, value, row.vendorcode);
     // Сначала обновляем локальные данные
     setTableData(prev => {
       const newData = prev.map(item =>
-        item.nmid === row.nmid ? { ...item, [field]: value } : item
+        item.vendorcode === row.vendorcode ? { ...item, [field]: value } : item
       );
+      console.log('newData sample:', newData.find(i => i.vendorcode === row.vendorcode));
       return newData;
     });
 
@@ -143,7 +145,7 @@ const GoodsMain = () => {
       // Загружаем товары
       const goods = await downloadGoodsData(userdata, setStatus);
       setTableData(goods);
-      originalDataRef.current = JSON.parse(JSON.stringify(goods)); // глубокая копия
+
 
       // Обогащаем товары полем goods_grp_sel
       const enriched = goods.map(item => ({
@@ -171,7 +173,7 @@ const GoodsMain = () => {
         ['goods_grp_name']  
       );
       }
-
+      originalDataRef.current = JSON.parse(JSON.stringify(enriched)); // глубокая копия
       setTableData(enriched);
     } catch (err) {
       setError(err.message);

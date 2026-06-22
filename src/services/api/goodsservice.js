@@ -120,7 +120,7 @@ export async function changeGoodsGroup({ vendorcode, goods_grp_id }, token) {
  */
 export async function saveGoodsRow(row, originalRow, token) {
   // Сравниваем только редактируемые поля
-  const editableKeys = ['current_cost', 'change_date', 'goods_grp_sel', 'title', 'vendorcode', 'brand'];
+  const editableKeys = ['current_cost', 'goods_grp_sel',];
   
   const changedFields = [];
   for (const key of editableKeys) {
@@ -138,7 +138,7 @@ export async function saveGoodsRow(row, originalRow, token) {
   // Правила сохранения
   const saveRules = [
     {
-      fields: ['current_cost', 'change_date'],
+      fields: ['current_cost'],
       fn: () => updateCostPrice({
         vendorcode: row.vendorcode,
         new_cost: row.current_cost,
