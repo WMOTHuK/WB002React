@@ -3,7 +3,7 @@ import WideWidget from '../../components/ui/widewidget/WideWidget';
 import DataTable from '../../components/table/DataTable';
 import StatusMessage from '../../components/ui/StatusMessage';
 import { UserContext } from '../../context/context';
-import { fetchWBReportSummary, calculateWBReport } from '../../services/api/financeService';
+import { fetchWBReportSummary, calculateWBReport, fetchWBReportProductSummary } from '../../services/api/financeService';
 import { getTableKeys } from '../../utils/tableHelpers';
 import { getTableLocale } from '../../services/api/tableService';
 import { buildTableConfig } from '../../utils/buildTableConfig';
