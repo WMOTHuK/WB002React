@@ -8,9 +8,9 @@ export const columnTypes = {
   link:      ['nm_id', 'advertid', 'ozid', 'report_id'],
   image:     ['card_photo'],
   checkbox:  ['active', 'deleted', 'has_link', '_linked'],
-  number:    ['current_cost', 'price', 'discount', 'currentprice', 'dayprice', 'daydisc', 'nightprice', 'nightdisc', 'subjectid', 'imtid', 
+  number:    ['price', 'discount', 'currentprice', 'dayprice', 'daydisc', 'nightprice', 'nightdisc', 'subjectid', 'imtid', 
               "bank_payment_sum", "penalty_sum", "deduction_sum", "paid_acceptance_sum", "paid_storage_sum", "delivery_service_sum",
-              "for_pay_sum", "retail_amount_sum"],
+              "for_pay_sum", "retail_amount_sum", 'wb_current_cost', 'ozon_current_cost'],
   date:      ['pause_time', 'restart_time', 'change_date', 'valid_from', 'valid_to'],
   select:    ['oh_grp_sel', 'goods_type_sel', 'goods_grp_sel', 'locale'],
   text:      [ 'oh_name', 'oh_desc', 'oh_grp_name', 'oh_grp_desc','goods_grp_name', 'goods_grp_desc','goods_type_name', 'goods_type_desc'],
@@ -23,7 +23,6 @@ export const columnTypes = {
  * Fields that become editable when mode === 'edit'.
  */
 export const editableFields = [
-  'current_cost',
   'dayprice',
   'daydisc',
   'nightprice',
@@ -35,7 +34,9 @@ export const editableFields = [
   '_linked',
   'valid_from',
   'seller_tax_rate',
-  'vat_tax_rate'
+  'vat_tax_rate',
+  'wb_current_cost',
+  'ozon_current_cost'
 ];
 
 /**
@@ -131,7 +132,9 @@ export const columnFormats = {
 "paid_storage_sum",
 "delivery_service_sum",
 "for_pay_sum",
-"retail_amount_sum"],
+"retail_amount_sum",
+'wb_current_cost',
+'ozon_current_cost'],
 };
 
 /**

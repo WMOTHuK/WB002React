@@ -90,9 +90,10 @@ export async function changeGoodsGroupType({ id, goods_type_id }, token) {
 /**
  * Update cost and date for a good.
  */
-export async function updateCostPrice({ vendorcode, new_cost, start_date }, token) {
+export async function updateCostPrice({ vendorcode, platform, new_cost, start_date }, token) {
   const response = await axios.post('/api/content/update_cost_price', {
     vendorcode,
+    platform,
     new_cost,
     start_date,
   }, {
@@ -119,63 +120,64 @@ export async function changeGoodsGroup({ vendorcode, goods_grp_id }, token) {
  * Returns { success, error? }.
  */
 export async function saveGoodsRow(row, originalRow, token) {
-  // Сравниваем только редактируемые поля
-  const editableKeys = ['current_cost', 'goods_grp_sel',];
+  const trackedFields = ['wb_current_cost', 'ozon_current_cost', 'goods_grp_sel'];
   
   const changedFields = [];
-  for (const key of editableKeys) {
-    const newVal = row[key];
-    const oldVal = originalRow?.[key];
-    
-    // Приводим к строке для надёжного сравнения
-    if (String(newVal ?? '') !== String(oldVal ?? '')) {
+  for (const key of trackedFields) {
+    if (String(row[key] ?? '') !== String(originalRow?.[key] ?? '')) {
       changedFields.push(key);
     }
   }
 
   if (changedFields.length === 0) return { success: true };
 
-  // Правила сохранения
-  const saveRules = [
-    {
-      fields: ['current_cost'],
-      fn: () => updateCostPrice({
+  const errors = [];
+
+  // Если изменилась себестоимость WB
+  if (changedFields.includes('wb_current_cost')) {
+    try {
+      await updateCostPrice({
         vendorcode: row.vendorcode,
-        new_cost: row.current_cost,
-        start_date: row.change_date,
-      }, token),
-    },
-    {
-      fields: ['goods_grp_sel'],
-      fn: () => changeGoodsGroup({
+        new_cost: row.wb_current_cost,
+        start_date: row.change_date || new Date().toISOString().slice(0, 10),
+        platform: 'wb',
+      }, token);
+    } catch (err) {
+      errors.push(`Ошибка обновления себестоимости WB: ${err.response?.data?.error || err.message}`);
+    }
+  }
+
+  // Если изменилась себестоимость OZON
+  if (changedFields.includes('ozon_current_cost')) {
+    try {
+      await updateCostPrice({
+        vendorcode: row.vendorcode,
+        new_cost: row.ozon_current_cost,
+        start_date: row.change_date || new Date().toISOString().slice(0, 10),
+        platform: 'ozon',
+      }, token);
+    } catch (err) {
+      errors.push(`Ошибка обновления себестоимости OZON: ${err.response?.data?.error || err.message}`);
+    }
+  }
+
+  // Если изменилась группа
+  if (changedFields.includes('goods_grp_sel')) {
+    try {
+      await changeGoodsGroup({
         vendorcode: row.vendorcode,
         goods_grp_id: row.goods_grp_sel || null,
-      }, token),
-    },
-  ];
-
-  // Ищем точное совпадение
-  const matchedRule = saveRules.find(rule =>
-    rule.fields.length === changedFields.length &&
-    rule.fields.every(f => changedFields.includes(f))
-  );
-
-  if (!matchedRule) {
-    return {
-      success: false,
-      error: `Нет функции обновления для полей: ${changedFields.join(', ')}`,
-    };
+      }, token);
+    } catch (err) {
+      errors.push(`Ошибка смены группы: ${err.response?.data?.error || err.message}`);
+    }
   }
 
-  try {
-    await matchedRule.fn();
-    return { success: true };
-  } catch (err) {
-    return {
-      success: false,
-      error: err.response?.data?.error || err.message,
-    };
+  if (errors.length > 0) {
+    return { success: false, error: errors.join('; ') };
   }
+
+  return { success: true };
 }
 
 export async function syncUserGoods(token) {
