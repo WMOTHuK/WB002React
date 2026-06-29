@@ -187,7 +187,7 @@ const CRM_Campaigns = ({ activeOnly = true }) => {
   const handleHasLinkChange = async (value, row) => {
     setCardsData(prev =>
       prev.map(item =>
-        item.nmid === row.nmid ? { ...item, has_link: value } : item
+        item.vendorcode === row.vendorcode ? { ...item, has_link: value } : item
       )
     );
 
@@ -199,7 +199,7 @@ const CRM_Campaigns = ({ activeOnly = true }) => {
     } catch (err) {
       setCardsData(prev =>
         prev.map(item =>
-          item.nmid === row.nmid ? { ...item, has_link: !value } : item
+          item.vendorcode === row.vendorcode ? { ...item, has_link: !value } : item
         )
       );
     }
