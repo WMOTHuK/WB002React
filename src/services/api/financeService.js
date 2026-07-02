@@ -119,3 +119,11 @@ export async function fetchWBReportProducts(limit, token) {
   });
   return response.data;
 }
+
+export async function checkWBReport(reportId, token) {
+  const response = await axios.get(`${API}/checkwbfireport`, {
+    params: { report_id: reportId },
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}
