@@ -51,3 +51,25 @@ export async function translateFieldValues(rows, fieldKey, locale, token) {
     [fieldKey]: map[r[fieldKey]] || r[fieldKey],
   }));
 }
+
+/**
+ * Enrich rows with quantity data per vendorcode.
+ * Each row gets _quantities: { reportId: quantity } for the corresponding vendorcode.
+ *
+ * @param {Array} rows - data rows
+ * @param {string} quantityField - field name that contains quantity (e.g., 'Количество')
+ * @returns {Array} rows enriched with _quantities
+ */
+export function enrichWithQuantities(rows, quantityField = 'Количество') {
+  const qtyByVendor = {};
+  rows.forEach(row => {
+    if (row.field === quantityField) {
+      qtyByVendor[row.vendorcode] = row.values;
+    }
+  });
+
+  return rows.map(row => ({
+    ...row,
+    _quantities: qtyByVendor[row.vendorcode] || {},
+  }));
+}
