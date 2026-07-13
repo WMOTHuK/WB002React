@@ -69,3 +69,11 @@ export async function saveUserSettingsRow(row, originalRow, token) {
 
   return { success: true };
 }
+
+
+export async function syncData(token) {
+  const response = await axios.post(`${USER_API}/syncdata`, {}, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}
