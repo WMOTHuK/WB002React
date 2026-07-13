@@ -53,19 +53,23 @@ const FI_WBReportProducts = () => {
             header: 'Общее',
             cell: ({ row }) => {
               const val = row.original.values?.[r.id];
-              return val != null ? Number(val).toLocaleString('ru-RU') : '';
+              return val != null ? (
+                <strong style={{ textAlign: 'center', display: 'block' }}>{Number(val).toLocaleString('ru-RU')}</strong>
+              ) : '';
             },
           },
+
+          // Колонка "На ед."
           {
             accessorKey: `${r.id}_per_unit`,
             header: 'На ед.',
             cell: ({ row }) => {
               const val = row.original.values?.[r.id];
               if (val == null) return '';
-              if (row.original.field === 'Количество') return '';
+              if (row.original.field === 'Количество') return <div style={{ textAlign: 'center' }}>{Number(val).toLocaleString('ru-RU')}</div>;
               const qty = Number(row.original._quantities?.[r.id] || 0);
-              if (!qty || qty === 0) return Number(val).toLocaleString('ru-RU');
-              return (Number(val) / qty).toLocaleString('ru-RU', { maximumFractionDigits: 2 });
+              if (!qty || qty === 0) return <div style={{ textAlign: 'center' }}>{Number(val).toLocaleString('ru-RU') + ' / ед.'}</div>;
+              return <div style={{ textAlign: 'center' }}>{(Number(val) / qty).toLocaleString('ru-RU', { maximumFractionDigits: 2 }) + ' / шт.'}</div>;
             },
           },
         ]),
